@@ -49,7 +49,6 @@ const refCV = (img, thr) => {
       approx_grand.delete();
       continue;
     }
-    approx_grand.delete();
 
     let area_self = cv.contourArea(cont, false);
     let area_parent = cv.contourArea(cont_parent, false);
@@ -58,14 +57,76 @@ const refCV = (img, thr) => {
 
     if (Math.abs(area_parent / area_self - ans) > max_error_rate) continue;
 
-    refCandidate(cont_parent, approx_parent, cont);
+    refCandidate(cont_parent, approx_parent, approx_grand, cont);
 
     approx_parent.delete();
+    approx_grand.delete();
     break;
   }
   contours.delete();
   hierarchy.delete();
 };
+
+function refCandidate(cont_parent, approx_parent, approx_grand, cont) {
+  let t = cv.boundingRect(cont_parent);
+  ctx.beginPath();
+  ctx.lineWidth = "2";
+  ctx.strokeStyle = "red";
+  ctx.rect(t.x, t.y, t.width, t.height);
+  ctx.stroke();
+
+  let ap = approx_parent.data32S;
+  let ap_ = approx_grand.data32S;
+
+  let centerPoint = crossPoint(
+    new Point(ap[0], ap[1]),
+    new Point(ap[4], ap[5]),
+    new Point(ap[2], ap[3]),
+    new Point(ap[6], ap[7])
+  );
+
+  theta = (findHorizon(ap) + findHorizon(ap_)) / 2;
+
+  D = 4096;
+  R = Math.PI / 2;
+  F = 1000;
+  DRF();
+  centerPoint.plane();
+  ref = [];
+  ref_LR = [];
+  ref[0] = centerPoint.copy();
+  ref[1] = centerPoint.copy();
+  ref[2] = centerPoint.copy();
+  ref_LR[0] = centerPoint.copy();
+  ref_LR[1] = centerPoint.copy();
+  const v = cont.data32S;
+  const z = cont.size().height * 2;
+  for (let i = 0; i < z; i += 2) {
+    let p = new Point(v[i], v[i + 1]);
+    p.plane();
+    if (ref[0].y() > p.y()) {
+      ref[0].y(p.y());
+      ref[0].x(p.x());
+    } else if (ref[2].y() < p.y()) {
+      ref[2].y(p.y());
+      ref[2].x(p.x());
+    }
+    if (ref_LR[0].x() > p.x()) {
+      ref_LR[0].x(p.x());
+      ref_LR[0].y(p.y());
+    } else if (ref_LR[1].x() < p.x()) {
+      ref_LR[1].x(p.x());
+      ref_LR[1].y(p.y());
+    }
+  }
+  ref[0].screen();
+  ref[1].screen();
+  ref[2].screen();
+  ref_LR[0].screen();
+  ref_LR[1].screen();
+
+  refCheck(ref, circle_radius, ref_LR);
+}
 
 const findHorizon = (ap) => {
   let d1, d2;
@@ -145,92 +206,11 @@ const findHorizon = (ap) => {
   }
 };
 
-let ref = [new Point(0, -100), new Point(0, -70), new Point(0, -20)];
-
-function refCandidate(cont_parent, approx_parent, cont) {
-  let t = cv.boundingRect(cont_parent);
-  ctx.beginPath();
-  ctx.lineWidth = "2";
-  ctx.strokeStyle = "red";
-  ctx.rect(t.x, t.y, t.width, t.height);
-  ctx.stroke();
-
-  let ap = approx_parent.data32S;
-  ctx.beginPath();
-  ctx.moveTo(ap[0], ap[1]);
-  ctx.lineTo(ap[2], ap[3]);
-  ctx.lineTo(ap[4], ap[5]);
-  ctx.lineTo(ap[6], ap[7]);
-  ctx.lineTo(ap[8], ap[9]);
-  ctx.stroke();
-
-  let centerPoint = crossPoint(
-    new Point(ap[0], ap[1]),
-    new Point(ap[4], ap[5]),
-    new Point(ap[2], ap[3]),
-    new Point(ap[6], ap[7])
-  );
-
-  theta = findHorizon(ap);
-
-  t = cv.boundingRect(cont);
-  ctx.beginPath();
-  ctx.lineWidth = "2";
-  ctx.strokeStyle = "red";
-  ctx.rect(t.x, t.y, t.width, t.height);
-  ctx.stroke();
-
-  const area = cv.contourArea(cont, false);
-
-  D = 100;
-  R = Math.PI / 2;
-  F = 100;
-  DRF();
-  centerPoint.plane();
-  ref[0] = centerPoint.copy();
-  ref[1] = centerPoint.copy();
-  ref[2] = centerPoint.copy();
-  let mn_x = 2e9;
-  let mx_x = -2e9;
-  const v = cont.data32S;
-  const z = cont.size().height * 2;
-  for (let i = 0; i < z; i += 2) {
-    let p = new Point(v[i], v[i + 1]);
-    p.plane();
-    if (ref[0].y() > p.y()) {
-      ref[0].y(p.y());
-    } else if (ref[2].y() < p.y()) {
-      ref[2].y(p.y());
-    }
-    if (mn_x > p.x()) {
-      mn_x = p.x();
-    } else if (mx_x < p.x()) {
-      mx_x = p.x();
-    }
-  }
-  ref[0].screen();
-  ref[1].screen();
-  ref[2].screen();
-
-  const width = mx_x - mn_x;
-  let calc_area_ratio = (4 * area) / width / width / Math.PI;
-  if (calc_area_ratio > 1) calc_area_ratio = 1;
-  else if (calc_area_ratio < 0) calc_area_ratio = 0;
-  R = Math.PI / 2 - Math.acos(calc_area_ratio);
-  DRF();
-
-  refCheck(ref, circle_radius);
-}
-
-const refCheck = (ref_origin, d) => {
-  let ref = [];
-  ref[0] = ref_origin[0];
-  ref[1] = ref_origin[1];
-  ref[2] = ref_origin[2];
-  let D_S = 0,
-    D_E = 2e9;
-  while (D_S + 0.1 <= D_E) {
-    D = (D_S + D_E) / 2;
+const refCheck = (ref, d, ref_LR) => {
+  let R_S = 0,
+    R_E = Math.PI / 2;
+  while (R_S + 0.001 <= R_E) {
+    R = (R_S + R_E) / 2;
     if (fixed_F) {
       F = fixed_F;
       DRF();
@@ -247,12 +227,14 @@ const refCheck = (ref_origin, d) => {
         }
       }
     }
-    if (distance(ref[0], ref[2]) > d + d) {
-      D_E = D;
+    if (distance(ref[0], ref[2]) > distance(ref_LR[0], ref_LR[1])) {
+      R_S = R;
     } else {
-      D_S = D;
+      R_E = R;
     }
   }
+  D *= (d + d) / distance(ref[0], ref[2]);
   DRF();
+  console.log(D, R, F);
   gridGraphic();
 };
