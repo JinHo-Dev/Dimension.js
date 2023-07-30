@@ -10,7 +10,6 @@ const start = () => {
       },
     })
     .then((stream) => {
-      const vid = document.querySelector("video");
       vid.srcObject = stream;
       vid.onloadedmetadata = () => {
         vid.play();

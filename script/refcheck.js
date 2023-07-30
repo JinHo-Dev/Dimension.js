@@ -97,8 +97,8 @@ function refCandidate(cont_parent, approx_parent, approx_grand, cont) {
   ref[0] = centerPoint.copy();
   ref[1] = centerPoint.copy();
   ref[2] = centerPoint.copy();
-  ref_LR[0] = centerPoint.copy();
-  ref_LR[1] = centerPoint.copy();
+  ref_LR[0] = new Point(centerPoint.x(), 2e9, 1);
+  ref_LR[1] = new Point(centerPoint.x(), 2e9, 1);
   const v = cont.data32S;
   const z = cont.size().height * 2;
   for (let i = 0; i < z; i += 2) {
@@ -106,19 +106,25 @@ function refCandidate(cont_parent, approx_parent, approx_grand, cont) {
     p.plane();
     if (ref[0].y() > p.y()) {
       ref[0].y(p.y());
-      ref[0].x(p.x());
     } else if (ref[2].y() < p.y()) {
       ref[2].y(p.y());
-      ref[2].x(p.x());
     }
-    if (ref_LR[0].x() > p.x()) {
+    if (
+      p.x() < ref[1].x() &&
+      Math.abs(ref_LR[0].y() - ref[1].y()) > Math.abs(ref[1].y() - p.y())
+    ) {
       ref_LR[0].x(p.x());
       ref_LR[0].y(p.y());
-    } else if (ref_LR[1].x() < p.x()) {
+    } else if (
+      p.x() > ref[1].x() &&
+      Math.abs(ref_LR[1].y() - ref[1].y()) > Math.abs(ref[1].y() - p.y())
+    ) {
       ref_LR[1].x(p.x());
       ref_LR[1].y(p.y());
     }
   }
+  ref_LR[0].y(ref[1].y());
+  ref_LR[1].y(ref[1].y());
   ref[0].screen();
   ref[1].screen();
   ref[2].screen();

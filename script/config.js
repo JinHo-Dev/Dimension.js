@@ -10,16 +10,18 @@ const cvs = document.querySelector("canvas");
 const ctx = cvs.getContext("2d");
 
 // Width, Height of Video/Canvas
-let W = 600;
-let H = 400;
+let W;
+let H;
 
 // Distance, Radius, Focus, theta
-let D = 530;
-let R = 0.7;
-let F = 100;
+let D;
+let R;
+let F;
 let theta = 0;
 // if "F" fixed
 let fixed_F = 0;
+// iphone 13mini => 750
+// macbook pro 14' => 1200
 
 // pre calc
 let sinR, cosR, tanR, itanR, DsinR, DcosR;
