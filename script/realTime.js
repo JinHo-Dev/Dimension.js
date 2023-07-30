@@ -1,12 +1,12 @@
 navigator.mediaDevices
   .getUserMedia({
     audio: false,
-    video: {
-      frameRate: { max: 30 },
-      facingMode: { exact: "environment" },
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
-    },
+    // video: {
+    //   frameRate: { max: 30 },
+    //   facingMode: { exact: "environment" },
+    //   width: { ideal: 1920 },
+    //   height: { ideal: 1080 },
+    // },
   })
   .then((stream) => {
     vid.srcObject = stream;
