@@ -2,9 +2,9 @@
   name="viewport"
   content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
 />
-<img id="imageSrc" style="display:none;">
+<img id="imageSrc">
 <input type="file" id="fileInput" name="file" /></div>
-<video></video>
+<video playsinline></video>
 <canvas></canvas>
 
 <style>
@@ -15,7 +15,7 @@
     display: none;
   }
   video {
-    display: none;
+    display: block;
   }
   canvas {
     width: 100%;
@@ -36,5 +36,7 @@
 <script src="script/reversePoint.js"></script>
 <script src="script/refcheck.js"></script>
 
-<!--script async src="4.8.0.js"></script-->
-<script async src="https://docs.opencv.org/4.8.0/opencv.js"></script>
+<script async src="4.8.0.js"></script>
+<!--script async src="https://docs.opencv.org/4.8.0/opencv.js"></script-->
+
+<script></script>

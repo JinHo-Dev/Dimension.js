@@ -1,27 +1,35 @@
-navigator.mediaDevices
-  .getUserMedia({
-    audio: false,
-    video: true,
-    // video: {
-    //   frameRate: { max: 30 },
-    //   facingMode: { exact: "environment" },
-    //   width: { ideal: 1920 },
-    //   height: { ideal: 1080 },
-    // },
-  })
-  .then((stream) => {
-    vid.srcObject = stream;
-    vid.onloadedmetadata = () => {
-      vid.play();
-      W = vid.videoWidth;
-      H = vid.videoHeight;
-      vid.width = W;
-      vid.height = H;
-      cvs.width = W;
-      cvs.height = H;
-      setInterval(realTime, interval_time);
-    };
-  });
+window.alert(-2);
+const start = () => {
+  window.alert(-1);
+  navigator.mediaDevices
+    .getUserMedia({
+      audio: false,
+      video: {
+        frameRate: { max: 30 },
+        facingMode: { exact: "environment" },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
+    })
+    .then((stream) => {
+      window.alert(0);
+      const vid = document.querySelector("video");
+      vid.srcObject = stream;
+      window.alert(1);
+      vid.onloadedmetadata = () => {
+        window.alert(2);
+        vid.play();
+        window.alert(3);
+        // W = vid.videoWidth;
+        // H = vid.videoHeight;
+        // vid.width = W;
+        // vid.height = H;
+        // cvs.width = W;
+        // cvs.height = H;
+        // setInterval(realTime, interval_time);
+      };
+    });
+};
 
 document.querySelector("input").addEventListener(
   "change",
