@@ -2,8 +2,8 @@
   name="viewport"
   content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
 />
-<img id="imageSrc">
-<input type="file" id="fileInput" name="file" /></div>
+<img id="imageSrc" />
+<!-- <input type="file" id="fileInput" name="file" /></div> -->
 <video playsinline></video>
 <canvas></canvas>
 
@@ -39,4 +39,11 @@
 <!-- <script async src="script/4.8.0.js"></script> -->
 <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script>
 
-<script>start();</script>
+<script>
+  let itv = setInterval(function () {
+    if (typeof cv != "undefined") {
+      clearInterval(itv);
+      start();
+    }
+  });
+</script>

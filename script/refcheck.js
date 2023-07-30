@@ -254,6 +254,5 @@ const refCheck = (ref_origin, d) => {
     }
   }
   DRF();
-  console.log(F);
   gridGraphic();
 };
