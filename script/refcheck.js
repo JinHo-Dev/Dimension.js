@@ -84,8 +84,15 @@ function refCandidate(cont_parent, approx_parent, approx_grand, cont) {
     new Point(ap[2], ap[3]),
     new Point(ap[6], ap[7])
   );
-
-  theta = (findHorizon(ap) + findHorizon(ap_)) / 2;
+  const theta1 = findHorizon(ap);
+  const theta2 = findHorizon(ap_);
+  if (theta1 < Math.PI / 2 && theta2 > (3 * Math.PI) / 2) {
+    theta = 0;
+  } else if (theta2 < Math.PI / 2 && theta1 > (3 * Math.PI) / 2) {
+    theta = 0;
+  } else {
+    theta = (theta1 + theta2) / 2;
+  }
 
   D = 4096;
   R = Math.PI / 2;
@@ -212,6 +219,8 @@ const findHorizon = (ap) => {
   }
 };
 
+let avgF = 0;
+let numF = 0;
 const refCheck = (ref, d, ref_LR) => {
   let R_S = 0,
     R_E = Math.PI / 2;
@@ -219,6 +228,9 @@ const refCheck = (ref, d, ref_LR) => {
     R = (R_S + R_E) / 2;
     if (fixed_F) {
       F = fixed_F;
+      DRF();
+    } else if (numF == 100) {
+      F = avgF;
       DRF();
     } else {
       let F_S = 0,
@@ -232,6 +244,10 @@ const refCheck = (ref, d, ref_LR) => {
           F_E = F;
         }
       }
+      avgF = (numF * avgF + F) / (numF + 1);
+      numF++;
+      F = avgF;
+      DRF();
     }
     if (distance(ref[0], ref[2]) > distance(ref_LR[0], ref_LR[1])) {
       R_S = R;
