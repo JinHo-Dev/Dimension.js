@@ -1,6 +1,7 @@
 navigator.mediaDevices
   .getUserMedia({
     audio: false,
+    video: true,
     // video: {
     //   frameRate: { max: 30 },
     //   facingMode: { exact: "environment" },
