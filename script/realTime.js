@@ -1,6 +1,4 @@
-window.alert(-2);
 const start = () => {
-  window.alert(-1);
   navigator.mediaDevices
     .getUserMedia({
       audio: false,
@@ -12,21 +10,17 @@ const start = () => {
       },
     })
     .then((stream) => {
-      window.alert(0);
       const vid = document.querySelector("video");
       vid.srcObject = stream;
-      window.alert(1);
       vid.onloadedmetadata = () => {
-        window.alert(2);
         vid.play();
-        window.alert(3);
-        // W = vid.videoWidth;
-        // H = vid.videoHeight;
-        // vid.width = W;
-        // vid.height = H;
-        // cvs.width = W;
-        // cvs.height = H;
-        // setInterval(realTime, interval_time);
+        W = vid.videoWidth;
+        H = vid.videoHeight;
+        vid.width = W;
+        vid.height = H;
+        cvs.width = W;
+        cvs.height = H;
+        setInterval(realTime, interval_time);
       };
     });
 };
@@ -74,13 +68,13 @@ function realTime() {
   let cap = new cv.VideoCapture(vid);
   let img = new cv.Mat({ width: W, height: H }, cv.CV_8UC4);
   cap.read(img);
-  // let thr = new cv.Mat();
-  // cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
-  // cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
+  let thr = new cv.Mat();
+  cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
+  cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
   cv.imshow(cvs, img);
 
-  // refCV(img, thr);
+  refCV(img, thr);
 
   img.delete();
-  // thr.delete();
+  thr.delete();
 }
