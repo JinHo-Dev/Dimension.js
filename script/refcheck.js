@@ -241,6 +241,6 @@ const refCheck = (ref, d, ref_LR) => {
   }
   D *= (d + d) / distance(ref[0], ref[2]);
   DRF();
-  console.log(D, R, F);
+  console.log(D, R, F, theta);
   gridGraphic();
 };
