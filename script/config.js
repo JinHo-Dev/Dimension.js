@@ -19,7 +19,7 @@ let R = 0.7;
 let F = 100;
 let theta = 0;
 // if "F" fixed
-let fixed_F = 1300;
+let fixed_F = 0;
 
 // pre calc
 let sinR, cosR, tanR, itanR, DsinR, DcosR;
