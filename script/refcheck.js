@@ -86,10 +86,11 @@ function refCandidate(cont_parent, approx_parent, approx_grand, cont) {
   );
   const theta1 = findHorizon(ap);
   const theta2 = findHorizon(ap_);
-  if (theta1 < Math.PI / 2 && theta2 > (3 * Math.PI) / 2) {
-    theta = 0;
-  } else if (theta2 < Math.PI / 2 && theta1 > (3 * Math.PI) / 2) {
-    theta = 0;
+
+  if (theta1 < 0 && theta2 > Math.PI) {
+    theta = -Math.PI / 2;
+  } else if (theta2 < 0 && theta1 > Math.PI) {
+    theta = -Math.PI / 2;
   } else {
     theta = (theta1 + theta2) / 2;
   }
@@ -219,7 +220,7 @@ const findHorizon = (ap) => {
   }
 };
 
-let avgF = 0;
+let avgF = 1000;
 let numF = 0;
 const refCheck = (ref, d, ref_LR) => {
   let R_S = 0,
@@ -229,7 +230,7 @@ const refCheck = (ref, d, ref_LR) => {
     if (fixed_F) {
       F = fixed_F;
       DRF();
-    } else if (numF == 100) {
+    } else if (numF == 60) {
       F = avgF;
       DRF();
     } else {
@@ -244,8 +245,8 @@ const refCheck = (ref, d, ref_LR) => {
           F_E = F;
         }
       }
-      avgF = (numF * avgF + F) / (numF + 1);
-      numF++;
+    }
+    if (F < 1 || F > 1e9) {
       F = avgF;
       DRF();
     }
@@ -255,8 +256,13 @@ const refCheck = (ref, d, ref_LR) => {
       R_E = R;
     }
   }
+  if (avgF != F) {
+    avgF = (numF * avgF + F) / (numF + 1);
+    numF++;
+    F = avgF;
+    DRF();
+  }
   D *= (d + d) / distance(ref[0], ref[2]);
   DRF();
-  console.log(D, R, F, theta);
   gridGraphic();
 };

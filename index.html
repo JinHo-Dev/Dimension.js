@@ -3,11 +3,22 @@
   content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
 />
 <img id="imageSrc" />
-<!-- <input type="file" id="fileInput" name="file" /></div> -->
 <video playsinline></video>
 <canvas></canvas>
 
+<button onclick="DRF_capture();">DRF setting</button>
+<textarea></textarea>
+
 <style>
+  textarea {
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    position: absolute;
+    top: calc(20% + 50px);
+    left: 10%;
+    width: 35%;
+    height: 70px;
+  }
   body {
     margin: 0;
   }
@@ -19,6 +30,15 @@
   }
   canvas {
     width: 100%;
+  }
+  button {
+    background-color: rgba(255, 255, 255, 0.8);
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 40px;
+    font-size: 20px;
   }
 </style>
 
@@ -36,8 +56,8 @@
 <script src="script/reversePoint.js"></script>
 <script src="script/refcheck.js"></script>
 
-<!-- <script async src="script/4.8.0.js"></script> -->
-<script async src="https://docs.opencv.org/4.8.0/opencv.js"></script>
+<script async src="script/4.8.0.js"></script>
+<!-- <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script> -->
 
 <script>
   let itv = setInterval(function () {
@@ -46,4 +66,31 @@
       start();
     }
   });
+
+  const DRF_capture = () => {
+    DRF_measure = true;
+    let sumR = 0;
+    let sumD = 0;
+    setTimeout(() => {
+      sumR += R;
+      sumD += D;
+    }, 400);
+    setTimeout(() => {
+      sumR += R;
+      sumD += D;
+    }, 600);
+    setTimeout(() => {
+      sumR += R;
+      sumD += D;
+    }, 800);
+    setTimeout(() => {
+      sumR += R;
+      sumD += D;
+      DRF_measure = false;
+      D = sumD / 4;
+      R = sumR / 4;
+      DRF();
+      document.querySelector("textarea").value = `D: ${D} \nR: ${R} \nF: ${F}`;
+    }, 1000);
+  };
 </script>
