@@ -32,7 +32,7 @@ function realTime() {
   cap.read(img);
   cv.imshow(cvs, img);
 
-  if (DRF_measure) {
+  if (DRF_measure || numF < 60) {
     cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
     cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
     refCV(img, thr);
