@@ -63,6 +63,8 @@ document.querySelector("button").onclick = () => {
         document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
           Math.round(R * 100) / 100
         } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
+      } else {
+        D = 0;
       }
     }, 300);
   }, 500);
