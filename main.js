@@ -39,6 +39,7 @@ let itv = setInterval(function () {
   }
 }, 33);
 
+let currentD, currentR, currentTheta;
 document.querySelector("button").onclick = () => {
   if (DRF_measure) return;
   DRF_measure = true;
@@ -47,13 +48,13 @@ document.querySelector("button").onclick = () => {
   let sumD = 0;
   let sumTheta = 0;
   let num = 0;
-  D = 0;
+  currentD = 0;
   setTimeout(() => {
     let itv = setInterval(() => {
-      if (!D) return;
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
+      if (!currentD) return;
+      sumR += currentR;
+      sumD += currentD;
+      sumTheta += currentTheta;
       if (++num == 5) {
         clearInterval(itv);
         document.querySelector("button").disabled = false;
@@ -66,7 +67,7 @@ document.querySelector("button").onclick = () => {
           Math.round(R * 100) / 100
         } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
       } else {
-        D = 0;
+        currentD = 0;
       }
     }, 300);
   }, 500);

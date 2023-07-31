@@ -235,7 +235,7 @@ const refCheck = (ref, d, ref_LR) => {
       DRF();
     } else {
       let F_S = 0,
-        F_E = 2e9;
+        F_E = 1e8;
       while (F_S + 0.1 <= F_E) {
         F = (F_S + F_E) / 2;
         DRF();
@@ -246,7 +246,7 @@ const refCheck = (ref, d, ref_LR) => {
         }
       }
     }
-    if (F < 1 || F > 1e9) {
+    if (F < 10 || F > 10000 || R > 1.4) {
       F = avgF;
       DRF();
     }
@@ -264,5 +264,8 @@ const refCheck = (ref, d, ref_LR) => {
   }
   D *= (d + d) / distance(ref[0], ref[2]);
   DRF();
+  currentD = D;
+  currentR = R;
+  currentTheta = theta;
   gridGraphic();
 };
