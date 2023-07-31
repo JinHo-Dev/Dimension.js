@@ -5,8 +5,10 @@ const start = () => {
       video: {
         frameRate: { max: 30 },
         facingMode: { exact: "environment" },
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
+        width: { ideal: 6000 },
+        height: { ideal: 4000 },
+        // width: { ideal: 1920 },
+        // height: { ideal: 1080 },
       },
     })
     .then((stream) => {
