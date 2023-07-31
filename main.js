@@ -40,6 +40,7 @@ let itv = setInterval(function () {
 }, 33);
 
 document.querySelector("button").onclick = () => {
+  if (DRF_measure) return;
   DRF_measure = true;
   document.querySelector("button").disabled = true;
   let sumR = 0;
@@ -54,6 +55,7 @@ document.querySelector("button").onclick = () => {
       sumD += D;
       sumTheta += theta;
       if (++num == 5) {
+        clearInterval(itv);
         document.querySelector("button").disabled = false;
         DRF_measure = false;
         D = sumD / num;
