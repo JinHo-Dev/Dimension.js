@@ -29,6 +29,7 @@ const start = () => {
         H = vid.videoHeight;
         vid.width = W;
         vid.height = H;
+        vid.style.height = (window.innerWidth / W) * H;
         cvs.width = W;
         cvs.height = H;
         cap = new cv.VideoCapture(vid);
@@ -42,7 +43,8 @@ const start = () => {
 let cap, img, thr;
 function realTime() {
   cap.read(img);
-  cv.imshow(cvs, img);
+  // cv.imshow(cvs, img);
+  ctx.clearRect(0, 0, W, H);
 
   if (DRF_measure || numF < numFmax) {
     cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
