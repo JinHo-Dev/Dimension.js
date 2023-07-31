@@ -1,5 +1,5 @@
 // measure DRF or not
-let DRF_measure = true;
+let DRF_measure = false;
 
 // reference size
 const circle_radius = 100;
