@@ -5,8 +5,8 @@ const start = () => {
       video: {
         frameRate: { min: 24, ideal: 60, max: 60 },
         facingMode: { exact: "environment" },
-        width: { ideal: 2112 },
-        height: { ideal: 1188 },
+        width: { ideal: 3840 },
+        height: { ideal: 2160 },
         // iphone balance resolution
         // width: { ideal: 2112 },
         // height: { ideal: 1188 },
@@ -16,6 +16,9 @@ const start = () => {
         // 1080p
         // width: { ideal: 1920 },
         // height: { ideal: 1080 },
+        // 4k
+        // width: { ideal: 3840 },
+        // height: { ideal: 2160 },
       },
     })
     .then((stream) => {
