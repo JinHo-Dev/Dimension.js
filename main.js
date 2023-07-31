@@ -33,7 +33,7 @@ getScript("script/reversePoint.js");
 getScript("script/refcheck.js");
 
 let itv = setInterval(function () {
-  if (typeof cv != "undefined") {
+  if (typeof cv != "undefined" && typeof start != "undefined") {
     clearInterval(itv);
     start();
   }
