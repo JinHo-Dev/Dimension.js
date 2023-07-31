@@ -41,45 +41,29 @@ let itv = setInterval(function () {
 
 document.querySelector("button").onclick = () => {
   DRF_measure = true;
+  document.querySelector("button").disabled = true;
   let sumR = 0;
   let sumD = 0;
   let sumTheta = 0;
   let num = 0;
   D = 0;
   setTimeout(() => {
-    if (!D) return;
-    sumR += R;
-    sumD += D;
-    sumTheta += theta;
-    num++;
+    let itv = setInterval(() => {
+      if (!D) return;
+      sumR += R;
+      sumD += D;
+      sumTheta += theta;
+      if (++num == 5) {
+        document.querySelector("button").disabled = false;
+        DRF_measure = false;
+        D = sumD / num;
+        R = sumR / num;
+        theta = sumTheta / num;
+        DRF();
+        document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
+          Math.round(R * 100) / 100
+        } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
+      }
+    }, 300);
   }, 500);
-  setTimeout(() => {
-    if (!D) return;
-    sumR += R;
-    sumD += D;
-    sumTheta += theta;
-    num++;
-  }, 800);
-  setTimeout(() => {
-    if (!D) return;
-    sumR += R;
-    sumD += D;
-    sumTheta += theta;
-    num++;
-  }, 1100);
-  setTimeout(() => {
-    if (!D) return;
-    sumR += R;
-    sumD += D;
-    sumTheta += theta;
-    num++;
-    DRF_measure = false;
-    D = sumD / num;
-    R = sumR / num;
-    theta = sumTheta / num;
-    DRF();
-    document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
-      Math.round(R * 100) / 100
-    } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
-  }, 1400);
 };
