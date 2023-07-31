@@ -44,29 +44,39 @@ document.querySelector("button").onclick = () => {
   let sumR = 0;
   let sumD = 0;
   let sumTheta = 0;
+  let num = 0;
+  D = 0;
   setTimeout(() => {
+    if (!D) return;
     sumR += R;
     sumD += D;
     sumTheta += theta;
+    num++;
   }, 500);
   setTimeout(() => {
+    if (!D) return;
     sumR += R;
     sumD += D;
     sumTheta += theta;
+    num++;
   }, 800);
   setTimeout(() => {
+    if (!D) return;
     sumR += R;
     sumD += D;
     sumTheta += theta;
+    num++;
   }, 1100);
   setTimeout(() => {
+    if (!D) return;
     sumR += R;
     sumD += D;
     sumTheta += theta;
+    num++;
     DRF_measure = false;
-    D = sumD / 4;
-    R = sumR / 4;
-    theta = sumTheta / 4;
+    D = sumD / num;
+    R = sumR / num;
+    theta = sumTheta / num;
     DRF();
     document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
       Math.round(R * 100) / 100
