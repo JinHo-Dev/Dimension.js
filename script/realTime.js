@@ -5,8 +5,12 @@ const start = () => {
       video: {
         frameRate: { max: 30 },
         facingMode: { exact: "environment" },
-        width: { ideal: 6000 },
-        height: { ideal: 4000 },
+        width: { ideal: 2000 },
+        height: { ideal: 3000 },
+        // iphone maximum
+        // width: { ideal: 3024 },
+        // height: { ideal: 4032 },
+        // 1080p
         // width: { ideal: 1920 },
         // height: { ideal: 1080 },
       },
