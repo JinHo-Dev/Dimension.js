@@ -1,5 +1,5 @@
 const getScript = (local, online, asyncMode) => {
-  const myURL = "http://godjh.dothome.co.kr/dimension.js/";
+  const myURL = "";
   if (online === undefined) {
     online = myURL + local;
   }
