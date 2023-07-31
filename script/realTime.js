@@ -3,13 +3,13 @@ const start = () => {
     .getUserMedia({
       audio: false,
       video: {
-        frameRate: { min: 24, ideal: 24, max: 30 },
+        frameRate: { min: 24, ideal: 60, max: 60 },
         facingMode: { exact: "environment" },
-        width: { ideal: 2000 },
-        height: { ideal: 1100 },
+        width: { ideal: 2112 },
+        height: { ideal: 1188 },
         // iphone balance resolution
-        // width: { ideal: 3024 },
-        // height: { ideal: 4032 },
+        // width: { ideal: 2112 },
+        // height: { ideal: 1188 },
         // iphone maximum
         // width: { ideal: 3024 },
         // height: { ideal: 4032 },
