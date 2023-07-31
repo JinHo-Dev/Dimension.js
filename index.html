@@ -4,32 +4,13 @@
 />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<img id="imageSrc" />
 <video playsinline></video>
 <canvas></canvas>
-
-<button onclick="DRF_capture();">DRF setting</button>
+<button>DRF set</button>
 <textarea></textarea>
-
 <style>
-  textarea {
-    background-color: rgba(255, 255, 255, 0.5);
-    font-size: 18px;
-    position: absolute;
-    top: calc(20% + 50px);
-    left: 10%;
-    width: 35%;
-    line-height: 24px;
-    height: 100px;
-    border: solid 1px black;
-    margin: 0;
-    padding: 0;
-  }
   body {
     margin: 0;
-  }
-  image {
-    display: none;
   }
   video {
     display: none;
@@ -46,77 +27,18 @@
     height: 40px;
     font-size: 20px;
   }
-</style>
-
-<script src="script/config.js"></script>
-<script src="script/DRF.js"></script>
-<script src="script/gridGraphic.js"></script>
-<script src="script/sixPoints.js"></script>
-<script src="script/sevenPoints.js"></script>
-<script src="script/ccw.js"></script>
-<script src="script/realTime.js"></script>
-<script src="script/pointClass.js"></script>
-<script src="script/crossPoint.js"></script>
-<script src="script/pillar.js"></script>
-<script src="script/distance.js"></script>
-<script src="script/reversePoint.js"></script>
-<script src="script/refcheck.js"></script>
-
-<!-- <script async src="script/4.8.0.js"></script> -->
-<!-- <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script> -->
-
-<script>
-  if (window.location.host) {
-    let scriptEle = document.createElement("script");
-    scriptEle.setAttribute("src", "https://docs.opencv.org/4.8.0/opencv.js");
-    scriptEle.setAttribute("async", "true");
-    document.body.appendChild(scriptEle);
-  } else {
-    let scriptEle = document.createElement("script");
-    scriptEle.setAttribute("src", "script/4.8.0.js");
-    scriptEle.setAttribute("async", "true");
-    document.body.appendChild(scriptEle);
+  textarea {
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    position: absolute;
+    top: calc(20% + 50px);
+    left: 10%;
+    width: 35%;
+    line-height: 24px;
+    height: 100px;
+    border: solid 1px black;
+    margin: 0;
+    padding: 0;
   }
-
-  let itv = setInterval(function () {
-    if (typeof cv != "undefined") {
-      clearInterval(itv);
-      start();
-    }
-  }, 33);
-
-  const DRF_capture = () => {
-    DRF_measure = true;
-    let sumR = 0;
-    let sumD = 0;
-    let sumTheta = 0;
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 500);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 700);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 900);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-      DRF_measure = false;
-      D = sumD / 4;
-      R = sumR / 4;
-      theta = sumTheta / 4;
-      DRF();
-      document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
-        Math.round(R * 100) / 100
-      } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
-    }, 1100);
-  };
-</script>
+</style>
+<script src="main.js"></script>
