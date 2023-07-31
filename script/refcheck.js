@@ -230,7 +230,7 @@ const refCheck = (ref, d, ref_LR) => {
     if (fixed_F) {
       F = fixed_F;
       DRF();
-    } else if (numF == 60) {
+    } else if (numF == numFmax) {
       F = avgF;
       DRF();
     } else {

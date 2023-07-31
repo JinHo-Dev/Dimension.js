@@ -5,8 +5,8 @@ const start = () => {
       video: {
         frameRate: { min: 24, ideal: 60, max: 60 },
         facingMode: { exact: "environment" },
-        width: { ideal: 2880 },
-        height: { ideal: 1620 },
+        width: { ideal: 2496 },
+        height: { ideal: 1404 },
         // iphone balance resolution
         // width: { ideal: 2112 },
         // height: { ideal: 1188 },
@@ -44,7 +44,7 @@ function realTime() {
   cap.read(img);
   cv.imshow(cvs, img);
 
-  if (DRF_measure || numF < 60) {
+  if (DRF_measure || numF < numFmax) {
     cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
     cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
     refCV(img, thr);

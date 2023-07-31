@@ -1,11 +1,12 @@
 // measure DRF or not
 let DRF_measure = false;
+const numFmax = 30;
 
 // reference size
 const circle_radius = 100;
 const rect_length = 312;
 const max_error_rate = 0.2;
-const interval_time = 100; // 10fps
+const interval_time = 200; // 5fps
 
 // get DOM object
 const vid = document.querySelector("video");
