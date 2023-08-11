@@ -1,5 +1,10 @@
 const Point = class {
   constructor(x, y, type) {
+    if (type == 2) {
+      type = 0;
+      x *= W / 320;
+      y *= H / 320;
+    }
     this.v_type = type === undefined ? 0 : type - 0;
     if (this.v_type) {
       this.v_x = x === undefined ? 0 : x;

@@ -31,6 +31,7 @@ getScript("script/pillar.js");
 getScript("script/distance.js");
 getScript("script/reversePoint.js");
 getScript("script/refcheck.js");
+getScript("script/u2net.js");
 
 let itv = setInterval(function () {
   if (typeof cv != "undefined" && typeof start != "undefined") {
@@ -71,4 +72,16 @@ document.querySelector("button").onclick = () => {
       }
     }, 300);
   }, 500);
+};
+
+const u2net = () => {
+  if (typeof ort === "undefined") {
+    setTimeout(u2net, 100);
+    return;
+  }
+  if (typeof u2net_trigger === "undefined") {
+    setTimeout(u2net, 100);
+    return;
+  }
+  u2net_trigger();
 };
