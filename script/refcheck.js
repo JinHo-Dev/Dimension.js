@@ -225,7 +225,7 @@ let numF = 0;
 const refCheck = (ref, d, ref_LR) => {
   let R_S = 0,
     R_E = Math.PI / 2;
-  while (R_S + 0.001 <= R_E) {
+  while (R_S + 0.006 < R_E) {
     R = (R_S + R_E) / 2;
     if (fixed_F) {
       F = fixed_F;
@@ -236,7 +236,7 @@ const refCheck = (ref, d, ref_LR) => {
     } else {
       let F_S = 0,
         F_E = 1e8;
-      while (F_S + 0.1 <= F_E) {
+      while (F_S + 0.1 < F_E) {
         F = (F_S + F_E) / 2;
         DRF();
         if (distance(ref[0], ref[1]) > distance(ref[1], ref[2])) {

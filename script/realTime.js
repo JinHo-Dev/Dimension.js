@@ -35,7 +35,10 @@ const start = () => {
         cap = new cv.VideoCapture(vid);
         img = new cv.Mat({ width: W, height: H }, cv.CV_8UC4);
         thr = new cv.Mat();
-        setInterval(realTime, interval_time);
+        setInterval(() => {
+          realTime();
+        }, interval_time);
+        u2net();
       };
     });
 };
@@ -43,12 +46,12 @@ const start = () => {
 let cap, img, thr;
 function realTime() {
   cap.read(img);
-  // cv.imshow(cvs, img);
   ctx.clearRect(0, 0, W, H);
+  cv.imshow(cvs, img);
 
-  if (DRF_measure || numF < numFmax) {
-    cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
-    cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
-    refCV(img, thr);
-  }
+  // if (DRF_measure || numF < numFmax) {
+  //   cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
+  //   cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
+  //   refCV(img, thr);
+  // }
 }
