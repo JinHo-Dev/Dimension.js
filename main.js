@@ -225,7 +225,8 @@ const pillar = (a, b) => {
   const dY = A.y() - B.y();
   const dis = Math.sqrt(dX * dX + dY * dY);
   const height =
-    (DsinR * dis) / (dis + Math.sqrt(A.X * A.X + Math.pow(DcosR - A.Y, 2)));
+    (DsinR * dis) /
+    (dis + Math.sqrt(A.x() * A.x() + Math.pow(DcosR - A.y(), 2)));
   return height;
 };
 
@@ -764,10 +765,11 @@ const sixPoints = (points) => {
 
   const P1 = pillar(lefts[0], lefts[1]);
   const P2 = pillar(right[0], right[1]);
+  console.log(P1, P2);
   height = (P1 + P2) / 2;
 
   width = distance(lefts[0], point_bottom);
-  depth = distance(middl[0], point_bottom);
+  depth = distance(right[0], point_bottom);
 
   return { height: height, width: width, depth: depth };
 };
