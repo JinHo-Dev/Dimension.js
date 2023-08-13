@@ -429,7 +429,7 @@ const getPoints = () => {
         new Point(approx.data32S[8], approx.data32S[9], 2),
         new Point(approx.data32S[10], approx.data32S[11], 2),
       ];
-      const volume = sevenPoints(boxPoints);
+      const volume = sixPoints(boxPoints);
       console.log(volume);
     }
     console.log(approx.size().height);
@@ -729,7 +729,7 @@ const gridGraphic = () => {
 // 기미 잡티 제거 알고리즘 필요함
 
 // scenario 1 (두면이 앞으로 보이는 경우 -> 기둥 3개 처리)
-const sevenPoints = (points) => {
+const sixPoints = (points) => {
   let height, width, depth;
   // 컨벡스헐로 가운데 갇힌 점 찾기
   // 갇힌 점의 바닥면을 찾기 => 아래 있는 점 두개 찾고 두 점 중 x좌표 가까운 거 고르기
@@ -743,23 +743,17 @@ const sevenPoints = (points) => {
     point.plane();
   });
   points.sort((a, b) => {
+    return a.y() - b.y();
+  });
+  let point_top = points.shift();
+  let point_bottom = points.pop();
+
+  points.sort((a, b) => {
     return a.x() - b.x();
   });
-  let lefts = [points[0], points[1]];
-  points.shift();
-  points.shift();
 
-  points.sort((a, b) => {
-    return b.x() - a.x();
-  });
+  let lefts = [points.shift(), points.shift()];
   let right = [points[0], points[1]];
-  points.shift();
-  points.shift();
-
-  points.sort((a, b) => {
-    return b.y() - a.y();
-  });
-  let middl = [points[0], points[1]];
 
   lefts.sort((a, b) => {
     return b.y() - a.y();
@@ -767,15 +761,13 @@ const sevenPoints = (points) => {
   right.sort((a, b) => {
     return b.y() - a.y();
   });
-  middl.sort((a, b) => {
-    return b.y() - a.y();
-  });
 
   const P1 = pillar(lefts[0], lefts[1]);
   const P2 = pillar(right[0], right[1]);
-  //const P3 = pillar(middl[0], middl[1]);
   height = (P1 + P2) / 2;
-  width = distance(lefts[0], middl[0]);
-  depth = distance(middl[0], right[0]);
+
+  width = distance(lefts[0], point_bottom);
+  depth = distance(middl[0], point_bottom);
+
   return { height: height, width: width, depth: depth };
 };
