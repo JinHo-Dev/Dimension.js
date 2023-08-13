@@ -418,33 +418,37 @@ const getPoints = () => {
   );
 
   let flag = 0;
-  for (let k = 0.001; k < 0.01 && !flag; k += 0.001) {
-    for (let i = 0; i < contours.size() && !flag; i++) {
-      let cont = contours.get(i);
-      let approx = new cv.Mat();
-      cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * k, true);
-      if (approx.size().height == 6) {
-        flag = 1;
-        const boxPoints = [
-          new Point(approx.data32S[0], approx.data32S[1], 2),
-          new Point(approx.data32S[2], approx.data32S[3], 2),
-          new Point(approx.data32S[4], approx.data32S[5], 2),
-          new Point(approx.data32S[6], approx.data32S[7], 2),
-          new Point(approx.data32S[8], approx.data32S[9], 2),
-          new Point(approx.data32S[10], approx.data32S[11], 2),
-        ];
-        const volume = sixPoints(boxPoints);
-        console.log(volume);
-        document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
-          volume.width
-        )} \n세로: ${Math.round(volume.depth)}\n 높이: ${Math.round(
-          volume.height
-        )}`;
-      }
-      console.log(approx.size().height);
-      cont.delete();
-      approx.delete();
+  for (let i = 0; i < contours.size() && !flag; i++) {
+    let cont = contours.get(i);
+    let z = cont.size().height;
+    for (let j = 0; j < z; j += 2) {
+      let tp = new Point(cont.data32S[0], cont.data32S[1], 2);
+      cont.data32S[j] = tp.x();
+      cont.data32S[j + 1] = tp.y();
     }
+    let approx = new cv.Mat();
+    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.02, true);
+    if (approx.size().height == 6) {
+      flag = 1;
+      const boxPoints = [
+        new Point(approx.data32S[0], approx.data32S[1], 2),
+        new Point(approx.data32S[2], approx.data32S[3], 2),
+        new Point(approx.data32S[4], approx.data32S[5], 2),
+        new Point(approx.data32S[6], approx.data32S[7], 2),
+        new Point(approx.data32S[8], approx.data32S[9], 2),
+        new Point(approx.data32S[10], approx.data32S[11], 2),
+      ];
+      const volume = sixPoints(boxPoints);
+      console.log(volume);
+      document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+        volume.width
+      )} \n세로: ${Math.round(volume.depth)}\n 높이: ${Math.round(
+        volume.height
+      )}`;
+    }
+    console.log(approx.size().height);
+    cont.delete();
+    approx.delete();
   }
   contours.delete();
   hierarchy.delete();
