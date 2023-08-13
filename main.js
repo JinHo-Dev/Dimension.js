@@ -431,12 +431,12 @@ const getPoints = () => {
     if (approx.size().height == 6) {
       flag = 1;
       const boxPoints = [
-        new Point(approx.data32S[0], approx.data32S[1], 2),
-        new Point(approx.data32S[2], approx.data32S[3], 2),
-        new Point(approx.data32S[4], approx.data32S[5], 2),
-        new Point(approx.data32S[6], approx.data32S[7], 2),
-        new Point(approx.data32S[8], approx.data32S[9], 2),
-        new Point(approx.data32S[10], approx.data32S[11], 2),
+        new Point(approx.data32S[0], approx.data32S[1]),
+        new Point(approx.data32S[2], approx.data32S[3]),
+        new Point(approx.data32S[4], approx.data32S[5]),
+        new Point(approx.data32S[6], approx.data32S[7]),
+        new Point(approx.data32S[8], approx.data32S[9]),
+        new Point(approx.data32S[10], approx.data32S[11]),
       ];
       const volume = sixPoints(boxPoints);
       console.log(volume);
@@ -446,7 +446,7 @@ const getPoints = () => {
         volume.height
       )}`;
     }
-    console.log(approx.size().height);
+    console.log(approx.data32S);
     cont.delete();
     approx.delete();
   }
