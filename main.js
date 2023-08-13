@@ -7,7 +7,7 @@ const numFmax = 30;
 let circle_radius = 100;
 let rect_length = 312;
 const max_error_rate = 0.2;
-const interval_time = 100; // 5fps
+const interval_time = 200; // 5fps
 
 // get DOM object
 const vid = document.querySelector("video");
@@ -427,7 +427,7 @@ const getPoints = () => {
       cont.data32S[j + 1] = tp.y();
     }
     let approx = new cv.Mat();
-    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.01, true);
+    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.05, true);
     if (approx.size().height == 6) {
       flag = 1;
       const boxPoints = [
