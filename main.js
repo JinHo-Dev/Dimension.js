@@ -98,7 +98,6 @@ document.querySelectorAll("button")[3].onclick = () => {
   fixed_F = document.querySelector("input").value - 0;
   numF = numFmax;
   avgF = fixed_F;
-  console.log(fixed_F);
 };
 document.querySelectorAll("button")[4].onclick = () => {
   fixed_F = 0;
@@ -378,7 +377,6 @@ let TW = 320,
 
 const detect = async () => {
   if (!BOX_measure) {
-    ctx_result.clearRect(0, 0, W, H);
     setTimeout(detect, interval_time);
     return;
   }
@@ -424,13 +422,14 @@ const detect = async () => {
     myImageData.data[pixelIndex] = t1; // red color
     myImageData.data[pixelIndex + 1] = t1; // green color
     myImageData.data[pixelIndex + 2] = t1; // blue color
-    myImageData.data[pixelIndex + 3] = 255 - t1;
+    myImageData.data[pixelIndex + 3] = 255;
   }
   // Apply image mask
   cvs_off.width = TW;
   cvs_off.height = TH;
   cvs_result.width = TW;
   cvs_result.height = TH;
+  ctx_result.clearRect(0, 0, 320, 320);
   ctx_result.putImageData(myImageData, 0, 0);
   cvs_result.style.width = document.querySelector("video").clientWidth;
   cvs_result.style.height = document.querySelector("video").clientHeight;
@@ -439,15 +438,15 @@ const detect = async () => {
 };
 
 const getPoints = () => {
-  let img = cv.matFromImageData(ctx_result.getImageData(0, 0, 320, 320));
-  let thr = new cv.Mat();
-  cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
-  cv.threshold(thr, thr, 0, 255, cv.THRESH_OTSU);
+  let img_ = cv.matFromImageData(ctx_result.getImageData(0, 0, 320, 320));
+  let thr_ = new cv.Mat();
+  cv.cvtColor(img_, thr_, cv.COLOR_BGR2GRAY);
+  cv.threshold(thr_, thr_, 0, 255, cv.THRESH_OTSU);
   let hierarchy = new cv.Mat();
   let contours = new cv.MatVector();
 
   cv.findContours(
-    thr,
+    thr_,
     contours,
     hierarchy,
     cv.RETR_EXTERNAL,
@@ -457,26 +456,31 @@ const getPoints = () => {
   let apVolume;
   for (let i = 0; i < contours.size(); i++) {
     let cont = contours.get(i);
-    let point_top, point_bottom, point_left, point_right;
+    let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
+    point_top.plane();
+    let point_bottom = point_top.copy();
+    let point_left = point_top.copy();
+    let point_right = point_top.copy();
     let z = cont.size().height;
-    for (let j = 0; j < z; j += 2) {
+    z += z;
+    if (z < 4) continue;
+    for (let j = 2; j < z; j += 2) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
       tp.plane();
-      if (!point_top || point_top.y() > tp.y()) {
-        point_top = tp.copy();
+      if (point_top.y() > tp.y()) {
+        point_top = tp;
       }
-      if (!point_bottom || point_bottom.y() < tp.y()) {
-        point_bottom = tp.copy();
+      if (point_bottom.y() < tp.y()) {
+        point_bottom = tp;
       }
-      if (!point_left || point_left.x() > tp.x()) {
-        point_left = tp.copy();
+      if (point_right.x() < tp.x()) {
+        point_right = tp;
       }
-      if (!point_right || point_right.x() < tp.x()) {
-        point_right = tp.copy();
+      if (point_left.x() > tp.x()) {
+        point_left = tp;
       }
     }
     const boxPoints = [point_top, point_left, point_right, point_bottom];
-    console.log(point_top, point_left, point_right, point_bottom);
     let volume = sixPoints(boxPoints);
     if (!apVolume || volume.score > apVolume.score) {
       apVolume = volume;
@@ -485,13 +489,13 @@ const getPoints = () => {
   }
   document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
     apVolume.width
-  )} \n세로: ${Math.round(apVolume.depth)}\n 높이: ${Math.round(
+  )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
     apVolume.height
   )}`;
   contours.delete();
   hierarchy.delete();
-  img.delete();
-  thr.delete();
+  img_.delete();
+  thr_.delete();
 };
 
 const refCV = (img, thr) => {
@@ -781,6 +785,8 @@ const gridGraphic = () => {
 const sixPoints = (points) => {
   points.forEach((point) => {
     point.screen();
+    ctx.fillStyle = "#2EE";
+    ctx.fillRect(point.x(), point.y(), 12, 12);
   });
   let p_temp;
   let height;

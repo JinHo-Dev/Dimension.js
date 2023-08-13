@@ -33,8 +33,14 @@
     position: absolute;
     width: 100%;
   }
+  canvas:nth-of-type(1) {
+    z-index: 1;
+  }
   canvas:nth-of-type(2) {
     display: none;
+  }
+  canvas:nth-of-type(3) {
+    opacity: 0.5;
   }
   button {
     background-color: rgba(255, 255, 255, 0.8);
@@ -45,6 +51,7 @@
     font-size: 11px;
     border: solid 1px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
+    z-index: 2;
   }
   button:nth-of-type(1) {
     /* SET D&R */
@@ -92,6 +99,7 @@
     border-bottom-left-radius: 15px;
     text-align: center;
     font-weight: bold;
+    z-index: 2;
   }
   input:nth-of-type(2) {
     top: 50px;
@@ -116,6 +124,7 @@
     margin: 0;
     padding: 0;
     font-family: monospace;
+    z-index: 2;
   }
   textarea:nth-of-type(2) {
     top: 240px;
