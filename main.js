@@ -418,7 +418,7 @@ const getPoints = () => {
   );
 
   let flag = 0;
-  for (let k = 0.006; k < 0.03 && !flag; k += 0.002) {
+  for (let k = 0.001; k < 0.01 && !flag; k += 0.001) {
     for (let i = 0; i < contours.size() && !flag; i++) {
       let cont = contours.get(i);
       let approx = new cv.Mat();
