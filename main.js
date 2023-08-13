@@ -421,9 +421,9 @@ const detect = async () => {
       t = 0;
     }
     const t1 = Math.round(pred.data[t] * 255);
-    myImageData.data[pixelIndex] = 255 - t1; // red color
-    myImageData.data[pixelIndex + 1] = 255 - t1; // green color
-    myImageData.data[pixelIndex + 2] = 255 - t1; // blue color
+    myImageData.data[pixelIndex] = t1; // red color
+    myImageData.data[pixelIndex + 1] = t1; // green color
+    myImageData.data[pixelIndex + 2] = t1; // blue color
     myImageData.data[pixelIndex + 3] = 255 - t1;
   }
   // Apply image mask
@@ -463,19 +463,20 @@ const getPoints = () => {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
       tp.plane();
       if (!point_top || point_top.y() > tp.y()) {
-        point_top = tp;
+        point_top = tp.copy();
       }
       if (!point_bottom || point_bottom.y() < tp.y()) {
-        point_bottom = tp;
+        point_bottom = tp.copy();
       }
       if (!point_left || point_left.x() > tp.x()) {
-        point_left = tp;
+        point_left = tp.copy();
       }
       if (!point_right || point_right.x() < tp.x()) {
-        point_right = tp;
+        point_right = tp.copy();
       }
     }
     const boxPoints = [point_top, point_left, point_right, point_bottom];
+    console.log(point_top, point_left, point_right, point_bottom);
     let volume = sixPoints(boxPoints);
     if (!apVolume || volume.score > apVolume.score) {
       apVolume = volume;
