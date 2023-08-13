@@ -7,8 +7,12 @@
 <video playsinline></video>
 <canvas></canvas>
 <canvas></canvas>
+<canvas></canvas>
 <button>DRF set</button>
-<textarea></textarea>
+<button>BOX On</button>
+<button>BOX OFF</button>
+<input type="checkbox" />
+<textarea readonly noresize="false"></textarea>
 <style>
   body {
     margin: 0;
@@ -23,25 +27,45 @@
     position: absolute;
     width: 100%;
   }
+  canvas:nth-of-type(2) {
+    display: none;
+  }
   button {
     background-color: rgba(255, 255, 255, 0.8);
     position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 40px;
-    font-size: 20px;
+    top: 10px;
+    width: 70px;
+    height: 30px;
+    font-size: 13px;
+    border: solid 1px black;
+    border-radius: 15px;
+  }
+  button:nth-of-type(1) {
+    left: 10px;
+  }
+  button:nth-of-type(2) {
+    left: 90px;
+  }
+  button:nth-of-type(3) {
+    left: 170px;
+  }
+  button:nth-of-type(4) {
+    left: 250px;
   }
   textarea {
+    display: none;
+    resize: none;
     background-color: rgba(255, 255, 255, 0.5);
     font-size: 18px;
     position: absolute;
-    top: calc(20% + 50px);
-    left: 10%;
+    top: 50px;
+    left: 10px;
     width: 35%;
-    line-height: 24px;
+    line-height: 20px;
     height: 100px;
+    font-size: 15px;
     border: solid 1px black;
+    border-radius: 3px;
     margin: 0;
     padding: 0;
   }

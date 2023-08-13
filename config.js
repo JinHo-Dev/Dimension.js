@@ -1,5 +1,6 @@
 // measure DRF or not
 let DRF_measure = false;
+let BOX_measure = false;
 const numFmax = 30;
 
 // reference size

@@ -45,8 +45,8 @@ const sevenPoints = (points) => {
 
   const P1 = pillar(lefts[0], lefts[1]);
   const P2 = pillar(right[0], right[1]);
-  const P3 = pillar(middl[0], middl[1]);
-  height = (P1 + P2 + P3) / 3;
+  //const P3 = pillar(middl[0], middl[1]);
+  height = (P1 + P2) / 2;
   width = distance(lefts[0], middl[0]);
   depth = distance(middl[0], right[0]);
   return { height: height, width: width, depth: depth };

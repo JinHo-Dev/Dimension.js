@@ -6,15 +6,23 @@ async function u2net_trigger() {
   });
   detect();
 }
-const cvs_result = document.querySelectorAll("canvas")[1];
+const cvs_off = document.querySelectorAll("canvas")[1];
+const ctx_off = cvs_off.getContext("2d");
+const cvs_result = document.querySelectorAll("canvas")[2];
 const ctx_result = cvs_result.getContext("2d");
 
-const detect = async () => {
-  ctx.drawImage(vid, 0, 0, 320, 320);
-  let TW = 320,
-    TH = 320;
+let TW = 320,
+  TH = 320;
 
-  let input_imageData = ctx.getImageData(0, 0, TW, TH); // change this for input
+const detect = async () => {
+  if (!BOX_measure) {
+    ctx_result.clearRect(0, 0, W, H);
+    setTimeout(detect, interval_time);
+    return;
+  }
+  ctx_off.drawImage(vid, 0, 0, 320, 320);
+
+  let input_imageData = ctx_off.getImageData(0, 0, TW, TH); // change this for input
   let floatArr = new Float32Array(TW * TH * 3);
   let floatArr2 = new Float32Array(TW * TH * 3);
 
@@ -42,7 +50,7 @@ const detect = async () => {
   const feeds = { "input.1": input };
   const results = await session.run(feeds).then();
   const pred = Object.values(results)[0];
-  let myImageData = ctx.createImageData(TW, TH);
+  let myImageData = ctx_off.createImageData(TW, TH);
   for (let i = 0; i < pred.data.length * 4; i += 4) {
     let pixelIndex = i;
     if (i != 0) {
@@ -51,21 +59,21 @@ const detect = async () => {
       t = 0;
     }
     const t1 = Math.round(pred.data[t] * 255);
-    if (t1 > 64) {
-      myImageData.data[pixelIndex] = t1; // red color
-      myImageData.data[pixelIndex + 1] = t1; // green color
-      myImageData.data[pixelIndex + 2] = t1; // blue color
-      myImageData.data[pixelIndex + 3] = 255;
-    }
+    myImageData.data[pixelIndex] = 255 - t1; // red color
+    myImageData.data[pixelIndex + 1] = 255 - t1; // green color
+    myImageData.data[pixelIndex + 2] = 255 - t1; // blue color
+    myImageData.data[pixelIndex + 3] = 255 - t1;
   }
   // Apply image mask
+  cvs_off.width = TW;
+  cvs_off.height = TH;
   cvs_result.width = TW;
   cvs_result.height = TH;
   ctx_result.putImageData(myImageData, 0, 0);
   cvs_result.style.width = document.querySelector("video").clientWidth;
   cvs_result.style.height = document.querySelector("video").clientHeight;
   getPoints();
-  setTimeout(detect, 30);
+  setTimeout(detect, interval_time);
 };
 
 const getPoints = () => {
@@ -88,7 +96,18 @@ const getPoints = () => {
     let cont = contours.get(i);
     let approx = new cv.Mat();
     cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.02, true);
-    if (approx.size().height < 5) continue;
+    if (approx.size().height == 6) {
+      const boxPoints = [
+        new Point(approx.data32S[0], approx.data32S[1], 2),
+        new Point(approx.data32S[2], approx.data32S[3], 2),
+        new Point(approx.data32S[4], approx.data32S[5], 2),
+        new Point(approx.data32S[6], approx.data32S[7], 2),
+        new Point(approx.data32S[8], approx.data32S[9], 2),
+        new Point(approx.data32S[10], approx.data32S[11], 2),
+      ];
+      const volume = sevenPoints(boxPoints);
+      console.log(volume);
+    }
     console.log(approx.size().height);
     cont.delete();
     approx.delete();

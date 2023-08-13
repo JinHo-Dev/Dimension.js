@@ -74,6 +74,13 @@ document.querySelector("button").onclick = () => {
   }, 500);
 };
 
+document.querySelectorAll("button")[1].onclick = () => {
+  BOX_measure = 1;
+};
+document.querySelectorAll("button")[2].onclick = () => {
+  BOX_measure = 0;
+};
+
 const u2net = () => {
   if (typeof ort === "undefined") {
     setTimeout(u2net, 100);
