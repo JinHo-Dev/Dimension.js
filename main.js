@@ -418,7 +418,7 @@ const getPoints = () => {
   );
 
   let flag = 0;
-  for (let k = 0.01; k < 0.06 && !flag; k += 0.005) {
+  for (let k = 0.006; k < 0.03 && !flag; k += 0.002) {
     for (let i = 0; i < contours.size() && !flag; i++) {
       let cont = contours.get(i);
       let approx = new cv.Mat();
@@ -435,9 +435,11 @@ const getPoints = () => {
         ];
         const volume = sixPoints(boxPoints);
         console.log(volume);
-        document.querySelectorAll(
-          "textarea"
-        )[1].value = `가로: ${volume.width} \n세로: ${volume.depth}\n 높이: ${volume.height}`;
+        document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+          volume.width
+        )} \n세로: ${Math.round(volume.depth)}\n 높이: ${Math.round(
+          volume.height
+        )}`;
       }
       console.log(approx.size().height);
       cont.delete();
