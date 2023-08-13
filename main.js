@@ -206,20 +206,11 @@ const Point = class {
   }
 };
 
-const distance = (a, b, h) => {
+const distance = (a, b) => {
   let A = a.copy();
   let B = b.copy();
-  const tD = D;
-  if (h) {
-    D = D - h / sinR;
-    DRF();
-  }
   A.plane();
   B.plane();
-  if (h) {
-    D = tD;
-    DRF();
-  }
   const dX = A.x() - B.x();
   const dY = A.y() - B.y();
   return Math.sqrt(dX * dX + dY * dY);
@@ -240,6 +231,52 @@ const pillar = (a, b) => {
     (DsinR * dis) /
     (dis + Math.sqrt(A.x() * A.x() + Math.pow(DcosR - A.y(), 2)));
   return height;
+};
+
+const plane_H = (a, H) => {
+  let A = a.copy();
+  const DD = D;
+  const RR = R;
+  R = Math.atan((DsinR - H) / DcosR);
+  D = DcosR / Math.cos(R);
+  DRF();
+  A.plane();
+  D = DD;
+  R = RR;
+  DRF();
+  return A;
+};
+
+const screen_H = (a, H) => {
+  let A = a.copy();
+  const DD = D;
+  const RR = R;
+  R = Math.atan((DsinR - H) / DcosR);
+  D = DcosR / Math.cos(R);
+  DRF();
+  A.screen();
+  D = DD;
+  R = RR;
+  DRF();
+  return A;
+};
+
+const distance_H = (a, b, H) => {
+  let A = a.copy();
+  let B = b.copy();
+  const DD = D;
+  const RR = R;
+  R = Math.atan((DsinR - H) / DcosR);
+  D = DcosR / Math.cos(R);
+  DRF();
+  A.plane();
+  B.plane();
+  const dX = A.x() - B.x();
+  const dY = A.y() - B.y();
+  D = DD;
+  R = RR;
+  DRF();
+  return Math.sqrt(dX * dX + dY * dY);
 };
 
 const crossPoint = (p1, p2, p3, p4) => {
@@ -417,39 +454,39 @@ const getPoints = () => {
     cv.CHAIN_APPROX_NONE
   );
 
-  let flag = 0;
-  for (let i = 0; i < contours.size() && !flag; i++) {
+  let apVolume;
+  for (let i = 0; i < contours.size(); i++) {
     let cont = contours.get(i);
+    let point_top, point_bottom, point_left, point_right;
     let z = cont.size().height;
     for (let j = 0; j < z; j += 2) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
-      cont.data32S[j] = tp.x();
-      cont.data32S[j + 1] = tp.y();
+      tp.plane();
+      if (!point_top || point_top.y() > tp.y()) {
+        point_top = tp;
+      }
+      if (!point_bottom || point_bottom.y() < tp.y()) {
+        point_bottom = tp;
+      }
+      if (!point_left || point_left.x() > tp.x()) {
+        point_left = tp;
+      }
+      if (!point_right || point_right.x() < tp.x()) {
+        point_right = tp;
+      }
     }
-    let approx = new cv.Mat();
-    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.05, true);
-    if (approx.size().height == 6) {
-      flag = 1;
-      const boxPoints = [
-        new Point(approx.data32S[0], approx.data32S[1]),
-        new Point(approx.data32S[2], approx.data32S[3]),
-        new Point(approx.data32S[4], approx.data32S[5]),
-        new Point(approx.data32S[6], approx.data32S[7]),
-        new Point(approx.data32S[8], approx.data32S[9]),
-        new Point(approx.data32S[10], approx.data32S[11]),
-      ];
-      const volume = sixPoints(boxPoints);
-      console.log(volume);
-      document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
-        volume.width
-      )} \n세로: ${Math.round(volume.depth)}\n 높이: ${Math.round(
-        volume.height
-      )}`;
+    const boxPoints = [point_top, point_left, point_right, point_bottom];
+    let volume = sixPoints(boxPoints);
+    if (!apVolume || volume.score > apVolume.score) {
+      apVolume = volume;
     }
-    console.log(approx.data32S);
     cont.delete();
-    approx.delete();
   }
+  document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+    apVolume.width
+  )} \n세로: ${Math.round(apVolume.depth)}\n 높이: ${Math.round(
+    apVolume.height
+  )}`;
   contours.delete();
   hierarchy.delete();
   img.delete();
@@ -740,52 +777,45 @@ const gridGraphic = () => {
   }
 };
 
-// 기미 잡티 제거 알고리즘 필요함
-
-// scenario 1 (두면이 앞으로 보이는 경우 -> 기둥 3개 처리)
 const sixPoints = (points) => {
-  let height, width, depth;
-  // 컨벡스헐로 가운데 갇힌 점 찾기
-  // 갇힌 점의 바닥면을 찾기 => 아래 있는 점 두개 찾고 두 점 중 x좌표 가까운 거 고르기
-  // 나머지 점들 중 왼쪽 두개 오른쪽 두개 짝지으면 됨
-  // 점 하나 남는 건 버려도 됨
-  // 세개의 쌍을 구했다고 가정함 왼쪽 lefts, 오른쪽 right, 가운데 middl : 각 바닥면 인덱스가 0 이라고 하자
-
-  // 근데 임시로는 그냥 왼쪽 두개, 오른쪽 두개, 아래쪽 두개 뽑기로 함
-
   points.forEach((point) => {
-    point.plane();
+    point.screen();
   });
-  points.sort((a, b) => {
-    return a.y() - b.y();
-  });
-  let point_top = points.shift();
-  let point_bottom = points.pop();
+  let p_temp;
+  let height;
+  let height_S = 0,
+    height_E = 1e6;
+  while (height_S + 0.1 < height_E) {
+    height = (height_S + height_E) / 2;
+    let p_top = plane_H(points[0], height);
+    let p_left = plane_H(points[1], height);
+    let p_right = plane_H(points[2], height);
+    let cx = (p_left.x() + p_right.x()) / 2;
+    let cy = (p_left.y() + p_right.y()) / 2;
+    p_temp = new Point(2 * cx - p_top.x(), 2 * cy - p_top.y(), 1);
+    let p = screen_H(p_temp, height);
+    if (pillar(p, points[3]) > height) {
+      height_S = height;
+    } else {
+      height_E = height;
+    }
+  }
+  width = distance_H(points[1], points[0], height);
+  depth = distance_H(points[2], points[0], height);
 
-  points.sort((a, b) => {
-    return a.x() - b.x();
-  });
-
-  let lefts = [points.shift(), points.shift()];
-  let right = [points[0], points[1]];
-
-  lefts.sort((a, b) => {
-    return b.y() - a.y();
-  });
-  right.sort((a, b) => {
-    return b.y() - a.y();
-  });
-
-  const P1 = pillar(lefts[0], lefts[1]);
-  const P2 = pillar(right[0], right[1]);
-  console.log(P1, P2);
-  height = (P1 + P2) / 2;
-
-  width = distance(lefts[0], point_bottom);
-  depth = distance(right[0], point_bottom);
   if (width > depth) {
-    return { height: height, width: width, depth: depth };
+    return {
+      height: height,
+      width: width,
+      depth: depth,
+      score: (depth - distance(points[3], p_temp)) / depth,
+    };
   } else {
-    return { height: height, width: depth, depth: width };
+    return {
+      height: height,
+      width: depth,
+      depth: width,
+      score: (width - distance(points[3], p_temp)) / width,
+    };
   }
 };
