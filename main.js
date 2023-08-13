@@ -417,25 +417,32 @@ const getPoints = () => {
     cv.CHAIN_APPROX_NONE
   );
 
-  for (let i = 0; i < contours.size(); i++) {
-    let cont = contours.get(i);
-    let approx = new cv.Mat();
-    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.02, true);
-    if (approx.size().height == 6) {
-      const boxPoints = [
-        new Point(approx.data32S[0], approx.data32S[1], 2),
-        new Point(approx.data32S[2], approx.data32S[3], 2),
-        new Point(approx.data32S[4], approx.data32S[5], 2),
-        new Point(approx.data32S[6], approx.data32S[7], 2),
-        new Point(approx.data32S[8], approx.data32S[9], 2),
-        new Point(approx.data32S[10], approx.data32S[11], 2),
-      ];
-      const volume = sixPoints(boxPoints);
-      console.log(volume);
+  let flag = 0;
+  for (let k = 0.01; k < 0.06 && !flag; k += 0.005) {
+    for (let i = 0; i < contours.size() && !flag; i++) {
+      let cont = contours.get(i);
+      let approx = new cv.Mat();
+      cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * k, true);
+      if (approx.size().height == 6) {
+        flag = 1;
+        const boxPoints = [
+          new Point(approx.data32S[0], approx.data32S[1], 2),
+          new Point(approx.data32S[2], approx.data32S[3], 2),
+          new Point(approx.data32S[4], approx.data32S[5], 2),
+          new Point(approx.data32S[6], approx.data32S[7], 2),
+          new Point(approx.data32S[8], approx.data32S[9], 2),
+          new Point(approx.data32S[10], approx.data32S[11], 2),
+        ];
+        const volume = sixPoints(boxPoints);
+        console.log(volume);
+        document.querySelectorAll(
+          "textarea"
+        )[1].value = `가로: ${volume.width} \n세로: ${volume.depth}\n 높이: ${volume.height}`;
+      }
+      console.log(approx.size().height);
+      cont.delete();
+      approx.delete();
     }
-    console.log(approx.size().height);
-    cont.delete();
-    approx.delete();
   }
   contours.delete();
   hierarchy.delete();
@@ -770,6 +777,9 @@ const sixPoints = (points) => {
 
   width = distance(lefts[0], point_bottom);
   depth = distance(right[0], point_bottom);
-
-  return { height: height, width: width, depth: depth };
+  if (width > depth) {
+    return { height: height, width: width, depth: depth };
+  } else {
+    return { height: height, width: depth, depth: width };
+  }
 };
