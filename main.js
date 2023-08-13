@@ -422,7 +422,7 @@ const getPoints = () => {
     let cont = contours.get(i);
     let z = cont.size().height;
     for (let j = 0; j < z; j += 2) {
-      let tp = new Point(cont.data32S[0], cont.data32S[1], 2);
+      let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
       cont.data32S[j] = tp.x();
       cont.data32S[j + 1] = tp.y();
     }
