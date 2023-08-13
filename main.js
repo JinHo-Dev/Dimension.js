@@ -427,7 +427,7 @@ const getPoints = () => {
       cont.data32S[j + 1] = tp.y();
     }
     let approx = new cv.Mat();
-    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.02, true);
+    cv.approxPolyDP(cont, approx, cv.arcLength(cont, true) * 0.01, true);
     if (approx.size().height == 6) {
       flag = 1;
       const boxPoints = [
