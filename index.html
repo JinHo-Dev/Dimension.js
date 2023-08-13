@@ -8,10 +8,14 @@
 <canvas></canvas>
 <canvas></canvas>
 <canvas></canvas>
-<button>DRF set</button>
-<button>BOX On</button>
+<button>SET D&R</button>
+<button>BOX ON</button>
 <button>BOX OFF</button>
-<input type="checkbox" />
+<input value="1700" />
+<input value="125" />
+<button>SET F</button>
+<button>AUTO F</button>
+
 <textarea readonly noresize="false"></textarea>
 <style>
   body {
@@ -34,47 +38,89 @@
     background-color: rgba(255, 255, 255, 0.8);
     position: absolute;
     top: 10px;
-    width: 70px;
+    width: 75px;
     height: 30px;
-    font-size: 12px;
-    border: solid 1px black;
+    font-size: 11px;
+    border: solid 1px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
   }
   button:nth-of-type(1) {
-    left: 10px;
+    /* SET D&R */
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    top: 60px;
+    left: 95px;
+    width: 90px;
   }
   button:nth-of-type(2) {
-    left: 90px;
+    /* BOX ON */
+    top: 110px;
+    left: 10px;
   }
   button:nth-of-type(3) {
-    left: 170px;
+    /* BOX OFF */
+    top: 110px;
+    left: 100px;
   }
   button:nth-of-type(4) {
-    left: 250px;
+    /* SET F */
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    top: 10px;
+    left: 95px;
+    width: 70px;
+  }
+  button:nth-of-type(5) {
+    /* AUTO F */
+    top: 10px;
+    left: 180px;
+  }
+  input {
+    font-family: monospace;
+    background-color: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 80px;
+    height: 30px;
+    font-size: 12px;
+    border: solid 1px rgba(0, 0, 0, 0.7);
+    border-radius: 3px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    text-align: center;
+    font-weight: bold;
+  }
+  input:nth-of-type(2) {
+    top: 60px;
   }
   textarea {
-    display: none;
     resize: none;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0);
+    color: #fff;
+    text-shadow: 0px 2px 0px rgba(0, 0, 0, 0.3), 1px 0px 0px rgba(0, 0, 0, 0.3),
+      -1px 0px 0px rgba(0, 0, 0, 0.3), 0px -2px 0px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
     font-size: 18px;
     position: absolute;
-    top: 50px;
+    top: 180px;
     left: 10px;
-    width: 35%;
+    width: 120px;
     line-height: 20px;
-    height: 100px;
+    height: 80px;
     font-size: 15px;
-    border: solid 1px black;
-    border-radius: 3px;
+    border: none;
+    border-radius: 0;
     margin: 0;
     padding: 0;
+    font-family: monospace;
   }
 </style>
 <script src="main.js"></script>
 <script src="u2netponnx.js"></script>
 
-<script async src="https://docs.opencv.org/4.8.0/opencv.js"></script>
-<!-- <script src="opencv.js"></script> -->
+<!-- <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script> -->
+<script async src="opencv.js"></script>
 
 <script
   async

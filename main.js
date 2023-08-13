@@ -4,10 +4,10 @@ let BOX_measure = false;
 const numFmax = 30;
 
 // reference size
-const circle_radius = 100;
-const rect_length = 312;
+let circle_radius = 100;
+let rect_length = 312;
 const max_error_rate = 0.2;
-const interval_time = 200; // 5fps
+const interval_time = 100; // 5fps
 
 // get DOM object
 const vid = document.querySelector("video");
@@ -54,6 +54,8 @@ let itv = setInterval(function () {
 
 let currentD, currentR, currentTheta;
 document.querySelector("button").onclick = () => {
+  rect_length = document.querySelectorAll("input")[1].value - 0;
+  circle_radius = rect_length / 3.12;
   if (DRF_measure) return;
   DRF_measure = true;
   document.querySelector("button").disabled = true;
@@ -78,7 +80,7 @@ document.querySelector("button").onclick = () => {
         DRF();
         document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
           Math.round(R * 100) / 100
-        } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
+        } \nF: ${Math.round(F)} \nTheta: ${Math.round(theta * 100) / 100}`;
       } else {
         currentD = 0;
       }
@@ -91,6 +93,16 @@ document.querySelectorAll("button")[1].onclick = () => {
 };
 document.querySelectorAll("button")[2].onclick = () => {
   BOX_measure = 0;
+};
+document.querySelectorAll("button")[3].onclick = () => {
+  fixed_F = document.querySelector("input").value - 0;
+  numF = numFmax;
+  avgF = fixed_F;
+  console.log(fixed_F);
+};
+document.querySelectorAll("button")[4].onclick = () => {
+  fixed_F = 0;
+  numF = 0;
 };
 
 const u2net = () => {
@@ -276,18 +288,6 @@ const start = () => {
         facingMode: { exact: "environment" },
         width: { ideal: 2496 },
         height: { ideal: 1404 },
-        // iphone balance resolution
-        // width: { ideal: 2112 },
-        // height: { ideal: 1188 },
-        // iphone maximum
-        // width: { ideal: 3024 },
-        // height: { ideal: 4032 },
-        // 1080p
-        // width: { ideal: 1920 },
-        // height: { ideal: 1080 },
-        // 4k
-        // width: { ideal: 3840 },
-        // height: { ideal: 2160 },
       },
     })
     .then((stream) => {
@@ -313,7 +313,7 @@ const start = () => {
 let cap, img, thr;
 function realTime() {
   // cv.imshow(cvs, img);
-  if (DRF_measure && !BOX_measure) {
+  if ((DRF_measure || numF < numFmax) && !BOX_measure) {
     ctx.clearRect(0, 0, W, H);
     cap.read(img);
     cv.cvtColor(img, thr, cv.COLOR_BGR2GRAY);
