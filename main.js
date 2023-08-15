@@ -488,7 +488,6 @@ const getPoints = () => {
       if (point_top.y() > tp.y()) {
         point_top = tp;
         index_top = j;
-        console.log(index_top);
       }
       if (point_bottom.y() < tp.y()) {
         point_bottom = tp;
@@ -503,17 +502,19 @@ const getPoints = () => {
         index_left = j;
       }
     }
+    point_top.screen();
+    point_left.screen();
+    point_right.screen();
+    point_bottom.screen();
     let a = point_left.y() - point_top.y();
     let b = point_top.x() - point_left.x();
     let c = point_left.x() * point_top.y() - point_top.x() * point_left.y();
     let d = Math.sqrt(a * a + b * b);
     let dist_left2 = 0;
     for (let j = index_top; j != index_left; ) {
-      console.log(index_top);
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
-      tp.plane();
-      let dist = (a * tp.x() + b * tp.y() + c) / d;
-      if (dist_left2 > dist) {
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_left2 < dist) {
         dist_left2 = dist;
         point_left2 = tp;
       }
@@ -525,14 +526,15 @@ const getPoints = () => {
     d = Math.sqrt(a * a + b * b);
     for (let j = index_left; j != index_bottom; ) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
-      tp.plane();
-      let dist = (a * tp.x() + b * tp.y() + c) / d;
-      if (dist_left2 > dist) {
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_left2 < dist) {
         dist_left2 = dist;
         point_left2 = tp;
       }
       j = (j + 2) % z;
     }
+    point_left.plane();
+    point_left2.plane();
     if (point_left2.y() < point_left.y()) {
       [point_left, point_left2] = [point_left2, point_left];
     }
@@ -544,9 +546,8 @@ const getPoints = () => {
     dist_right2 = 0;
     for (let j = index_right; j != index_top; ) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
-      tp.plane();
-      let dist = (a * tp.x() + b * tp.y() + c) / d;
-      if (dist_right2 > dist) {
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_right2 < dist) {
         dist_right2 = dist;
         point_right2 = tp;
       }
@@ -558,14 +559,15 @@ const getPoints = () => {
     d = Math.sqrt(a * a + b * b);
     for (let j = index_bottom; j != index_right; ) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
-      tp.plane();
-      let dist = (a * tp.x() + b * tp.y() + c) / d;
-      if (dist_right2 > dist) {
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_right2 < dist) {
         dist_right2 = dist;
         point_right2 = tp;
       }
       j = (j + 2) % z;
     }
+    point_right.plane();
+    point_right2.plane();
     if (point_right2.y() < point_right.y()) {
       [point_right, point_right2] = [point_right2, point_right];
     }

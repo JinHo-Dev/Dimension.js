@@ -323,54 +323,116 @@ log:
     for (let i = 0; i < contours.size(); i++) {
       let cont = contours.get(i);
       let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
-      const exactR = R;
-      const thisR = Math.PI / 2 - R;
-      const exactT = theta;
-      const thisT = (Math.PI + theta) % Math.PI;
-      R = thisR;
-      theta = thisT;
       point_top.plane();
       let point_bottom = point_top.copy();
       let point_left = point_top.copy();
       let point_left2 = point_top.copy();
       let point_right = point_top.copy();
       let point_right2 = point_top.copy();
+      let index_top = 0,
+        index_left = 0,
+        index_right = 0,
+        index_bottom = 0;
       let z = cont.size().height;
       z += z;
       if (z < 4) continue;
       for (let j = 2; j < z; j += 2) {
         let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
         tp.plane();
-        if (point_top.y() < tp.y()) {
+        if (point_top.y() > tp.y()) {
           point_top = tp;
+          index_top = j;
         }
-        if (point_bottom.y() > tp.y()) {
+        if (point_bottom.y() < tp.y()) {
           point_bottom = tp;
+          index_bottom = j;
         }
-        if (point_right.x() + 0.15 * point_right.y() < tp.x() + 0.15 * tp.y()) {
+        if (point_right.x() < tp.x()) {
           point_right = tp;
+          index_right = j;
         }
-        if (
-          point_right2.x() - 0.15 * point_right2.y() <
-          tp.x() - 0.15 * tp.y()
-        ) {
-          point_right2 = tp;
-        }
-        if (point_left.x() - 0.15 * point_left.y() > tp.x() - 0.15 * tp.y()) {
+        if (point_left.x() > tp.x()) {
           point_left = tp;
-        }
-        if (point_left2.x() + 0.15 * point_left2.y() > tp.x() + 0.15 * tp.y()) {
-          point_left2 = tp;
+          index_left = j;
         }
       }
+      point_top.screen();
+      point_left.screen();
+      point_right.screen();
+      point_bottom.screen();
+      let a = point_left.y() - point_top.y();
+      let b = point_top.x() - point_left.x();
+      let c = point_left.x() * point_top.y() - point_top.x() * point_left.y();
+      let d = Math.sqrt(a * a + b * b);
+      let dist_left2 = 0;
+      for (let j = index_top; j != index_left; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_left2 < dist) {
+          dist_left2 = dist;
+          point_left2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      a = point_left.y() - point_bottom.y();
+      b = point_bottom.x() - point_left.x();
+      c = point_left.x() * point_bottom.y() - point_bottom.x() * point_left.y();
+      d = Math.sqrt(a * a + b * b);
+      for (let j = index_left; j != index_bottom; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_left2 < dist) {
+          dist_left2 = dist;
+          point_left2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      point_left.plane();
+      point_left2.plane();
+      if (point_left2.y() < point_left.y()) {
+        [point_left, point_left2] = [point_left2, point_left];
+      }
+
+      a = point_right.y() - point_top.y();
+      b = point_top.x() - point_right.x();
+      c = point_right.x() * point_top.y() - point_top.x() * point_right.y();
+      d = Math.sqrt(a * a + b * b);
+      dist_right2 = 0;
+      for (let j = index_right; j != index_top; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_right2 < dist) {
+          dist_right2 = dist;
+          point_right2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      a = point_right.y() - point_bottom.y();
+      b = point_bottom.x() - point_right.x();
+      c =
+        point_right.x() * point_bottom.y() - point_bottom.x() * point_right.y();
+      d = Math.sqrt(a * a + b * b);
+      for (let j = index_bottom; j != index_right; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_right2 < dist) {
+          dist_right2 = dist;
+          point_right2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      point_right.plane();
+      point_right2.plane();
+      if (point_right2.y() < point_right.y()) {
+        [point_right, point_right2] = [point_right2, point_right];
+      }
+
       point_top.screen();
       point_left.screen();
       point_left2.screen();
       point_right.screen();
       point_right2.screen();
       point_bottom.screen();
-      R = exactR;
-      theta = exactT;
       const boxPoints = [
         point_top,
         point_left,
