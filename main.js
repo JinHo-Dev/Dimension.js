@@ -934,26 +934,17 @@ const gridGraphic = () => {
 };
 
 const sixPoints = (points) => {
+  console.log(points);
   points.forEach((point) => {
     point.screen();
     ctx.fillStyle = "#2EE";
     ctx.fillRect(point.x(), point.y(), 12, 12);
   });
-  let p_temp;
   let height =
     (pillar(points[1], points[3]) + pillar(points[2], points[4])) / 2;
-  width =
-    (distance_H(points[0], points[1], height) +
-      distance(points[4], points[5])) /
-    2;
-  depth =
-    (distance_H(points[0], points[2], height) +
-      distance(points[3], points[5])) /
-    2;
-  let score =
-    -Math.pow(pillar(points[1], points[3]) / height - 1, 2) -
-    Math.pow(distance(points[4], points[5]) / width - 1, 2) -
-    Math.pow(distance(points[3], points[5]) / depth - 1, 2);
+  width = distance(points[4], points[5]);
+  depth = distance(points[3], points[5]);
+  let score = -Math.pow(pillar(points[1], points[3]) / height - 1, 2);
   if (width > depth) {
     return {
       height: height,
