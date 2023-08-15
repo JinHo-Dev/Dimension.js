@@ -12,16 +12,33 @@
 <button>SET D&R</button>
 <button>BOX ON</button>
 <button>BOX OFF</button>
-<input value="1700" />
+<input value="1600" />
 <input value="125" />
 <button>SET F</button>
 <button>AUTO F</button>
 
 <textarea readonly noresize="false"></textarea>
 <textarea readonly noresize="false"></textarea>
+<textarea readonly noresize="false">
+log: 
+  
+</textarea>
 <style>
   body {
     margin: 0;
+    overflow: hidden;
+    -webkit-text-size-adjust: none;
+  }
+  * {
+    -webkit-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-appearance: none;
+    outline: none;
+    appearance: none;
   }
   video {
     position: absolute;
@@ -129,15 +146,12 @@
   textarea:nth-of-type(2) {
     top: 240px;
   }
+  textarea:nth-of-type(3) {
+    top: 340px;
+    font-size: 13px;
+  }
 </style>
 <script src="main.js"></script>
 <script src="u2netponnx.js"></script>
 
-<!-- <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script> -->
 <script async src="opencv.js"></script>
-
-<script
-  async
-  src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"
-></script>
-<!-- <script async src="ort.js"></script> -->

@@ -90,9 +90,11 @@ document.querySelector("button").onclick = () => {
 
 document.querySelectorAll("button")[1].onclick = () => {
   BOX_measure = 1;
+  document.querySelectorAll("textarea")[2].value += `detection ON\n\n`;
 };
 document.querySelectorAll("button")[2].onclick = () => {
   BOX_measure = 0;
+  document.querySelectorAll("textarea")[2].value += `detection OFF\n\n`;
 };
 document.querySelectorAll("button")[3].onclick = () => {
   fixed_F = document.querySelector("input").value - 0;
@@ -501,11 +503,19 @@ const getPoints = () => {
     }
     cont.delete();
   }
-  document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
-    apVolume.width
-  )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
-    apVolume.height
-  )}`;
+  if (apVolume) {
+    document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+      apVolume.width
+    )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
+      apVolume.height
+    )}`;
+
+    document.querySelectorAll("textarea")[2].value += `가로: ${Math.round(
+      apVolume.width
+    )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
+      apVolume.height
+    )}\n\n`;
+  }
   contours.delete();
   hierarchy.delete();
   img_.delete();
@@ -840,3 +850,12 @@ const sixPoints = (points) => {
     };
   }
 };
+
+const getScript = (online) => {
+  let scriptEle = document.createElement("script");
+  scriptEle.setAttribute("src", online);
+  scriptEle.setAttribute("async", "true");
+  document.body.appendChild(scriptEle);
+};
+
+getScript("https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js");
