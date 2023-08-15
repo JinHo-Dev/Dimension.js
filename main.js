@@ -471,11 +471,16 @@ const getPoints = () => {
     let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
     const exactR = R;
     const thisR = Math.PI / 2 - R;
+    const exactT = theta;
+    const thisT = Math.PI + theta;
     R = thisR;
+    theta = thisT;
     point_top.plane();
     let point_bottom = point_top.copy();
     let point_left = point_top.copy();
+    let point_left2 = point_top.copy();
     let point_right = point_top.copy();
+    let point_right2 = point_top.copy();
     let z = cont.size().height;
     z += z;
     if (z < 4) continue;
@@ -488,22 +493,35 @@ const getPoints = () => {
       if (point_bottom.y() < tp.y()) {
         point_bottom = tp;
       }
-      if (
-        point_right.x() - 0.1 * point_right.y() <
-        tp.x() - 0.1 * point_right.y()
-      ) {
+      if (point_right.x() - 0.15 * point_right.y() < tp.x() - 0.15 * tp.y()) {
         point_right = tp;
       }
-      if (point_left.x() + 0.1 * point_left.y() > tp.x() + 0.1 * tp.y()) {
+      if (point_right2.x() + 0.15 * point_right2.y() < tp.x() + 0.15 * tp.y()) {
+        point_right2 = tp;
+      }
+      if (point_left.x() + 0.15 * point_left.y() > tp.x() + 0.15 * tp.y()) {
         point_left = tp;
+      }
+      if (point_left2.x() - 0.15 * point_left2.y() > tp.x() - 0.15 * tp.y()) {
+        point_left2 = tp;
       }
     }
     point_top.screen();
     point_left.screen();
+    point_left2.screen();
     point_right.screen();
+    point_right2.screen();
     point_bottom.screen();
     R = exactR;
-    const boxPoints = [point_top, point_left, point_right, point_bottom];
+    theta = exactT;
+    const boxPoints = [
+      point_top,
+      point_left,
+      point_right,
+      point_left2,
+      point_right2,
+      point_bottom,
+    ];
     let volume = sixPoints(boxPoints);
     if (
       // volume &&
@@ -861,40 +879,33 @@ const sixPoints = (points) => {
     ctx.fillRect(point.x(), point.y(), 12, 12);
   });
   let p_temp;
-  let height;
-  let height_S = 0,
-    height_E = 1e6;
-  while (height_S + 0.1 < height_E) {
-    height = (height_S + height_E) / 2;
-    let p_top = plane_H(points[0], height);
-    let p_left = plane_H(points[1], height);
-    let p_right = plane_H(points[2], height);
-    let cx = (p_left.x() + p_right.x()) / 2;
-    let cy = (p_left.y() + p_right.y()) / 2;
-    p_temp = new Point(2 * cx - p_top.x(), 2 * cy - p_top.y(), 1);
-    let p = screen_H(p_temp, height);
-    if (pillar(p, points[3]) > height) {
-      height_S = height;
-    } else {
-      height_E = height;
-    }
-  }
-  width = distance_H(points[1], points[0], height);
-  depth = distance_H(points[2], points[0], height);
-
+  let height =
+    (pillar(points[1], points[3]) + pillar(points[2], points[4])) / 2;
+  width =
+    (distance_H(points[0], points[1], height) +
+      distance(points[4], points[5])) /
+    2;
+  depth =
+    (distance_H(points[0], points[2], height) +
+      distance(points[3], points[5])) /
+    2;
+  let score =
+    -Math.pow(pillar(points[1], points[3]) - height) -
+    Math.pow(distance(points[4], points[5]) - width) -
+    Math.pow(distance(points[3], points[5]) - depth);
   if (width > depth) {
     return {
       height: height,
       width: width,
       depth: depth,
-      score: (depth - distance(points[3], p_temp)) / depth,
+      score: score,
     };
   } else {
     return {
       height: height,
       width: depth,
       depth: width,
-      score: (width - distance(points[3], p_temp)) / width,
+      score: score,
     };
   }
 };
