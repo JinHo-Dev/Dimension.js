@@ -369,6 +369,8 @@ async function u2net_trigger() {
 }
 const cvs_off = document.querySelectorAll("canvas")[1];
 const ctx_off = cvs_off.getContext("2d");
+cvs_off.width = 320;
+cvs_off.height = 320;
 const cvs_result = document.querySelectorAll("canvas")[2];
 const ctx_result = cvs_result.getContext("2d");
 
@@ -378,8 +380,10 @@ let TW = 320,
 const detect = async () => {
   if (!BOX_measure) {
     setTimeout(detect, interval_time);
+    ctx_result.clearRect(0, 0, 320, 320);
     return;
   }
+  ctx.clearRect(0, 0, W, H);
   ctx_off.drawImage(vid, 0, 0, 320, 320);
 
   let input_imageData = ctx_off.getImageData(0, 0, TW, TH); // change this for input
@@ -429,7 +433,6 @@ const detect = async () => {
   cvs_off.height = TH;
   cvs_result.width = TW;
   cvs_result.height = TH;
-  ctx_result.clearRect(0, 0, 320, 320);
   ctx_result.putImageData(myImageData, 0, 0);
   cvs_result.style.width = document.querySelector("video").clientWidth;
   cvs_result.style.height = document.querySelector("video").clientHeight;
@@ -457,6 +460,9 @@ const getPoints = () => {
   for (let i = 0; i < contours.size(); i++) {
     let cont = contours.get(i);
     let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
+    const exactR = R;
+    const thisR = Math.PI / 2 - R;
+    R = thisR;
     point_top.plane();
     let point_bottom = point_top.copy();
     let point_left = point_top.copy();
@@ -473,13 +479,21 @@ const getPoints = () => {
       if (point_bottom.y() < tp.y()) {
         point_bottom = tp;
       }
-      if (point_right.x() < tp.x()) {
+      if (
+        point_right.x() - 0.1 * point_right.y() <
+        tp.x() - 0.1 * point_right.y()
+      ) {
         point_right = tp;
       }
-      if (point_left.x() > tp.x()) {
+      if (point_left.x() + 0.1 * point_left.y() > tp.x() + 0.1 * tp.y()) {
         point_left = tp;
       }
     }
+    point_top.screen();
+    point_left.screen();
+    point_right.screen();
+    point_bottom.screen();
+    R = exactR;
     const boxPoints = [point_top, point_left, point_right, point_bottom];
     let volume = sixPoints(boxPoints);
     if (!apVolume || volume.score > apVolume.score) {
