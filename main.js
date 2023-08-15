@@ -507,7 +507,7 @@ const getPoints = () => {
     let volume = sixPoints(boxPoints);
     if (
       volume &&
-      volume.score > 0.7 &&
+      volume.score > 0.3 &&
       volume.width < 1000 &&
       volume.height < 1000 &&
       volume.depth < 1000
