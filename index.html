@@ -226,12 +226,14 @@ log:
     const detect_ = async (cnt, total) => {
       if (cnt == total) {
         if (sumVolume.cnt > 0) {
-          document.querySelectorAll("textarea")[1].value = `
-    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+          document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+            sumVolume.width / sumVolume.cnt
+          )} \n세로: ${Math.round(
             sumVolume.depth / sumVolume.cnt
           )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
-          document.querySelectorAll("textarea")[2].value += `
-    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+          document.querySelectorAll("textarea")[2].value += `가로: ${Math.round(
+            sumVolume.width / sumVolume.cnt
+          )} \n세로: ${Math.round(
             sumVolume.depth / sumVolume.cnt
           )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
           alert(
@@ -323,11 +325,16 @@ log:
       let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
       const exactR = R;
       const thisR = Math.PI / 2 - R;
+      const exactT = theta;
+      const thisT = Math.PI + theta;
       R = thisR;
+      theta = thisT;
       point_top.plane();
       let point_bottom = point_top.copy();
       let point_left = point_top.copy();
+      let point_left2 = point_top.copy();
       let point_right = point_top.copy();
+      let point_right2 = point_top.copy();
       let z = cont.size().height;
       z += z;
       if (z < 4) continue;
@@ -340,26 +347,41 @@ log:
         if (point_bottom.y() < tp.y()) {
           point_bottom = tp;
         }
-        if (
-          point_right.x() - 0.1 * point_right.y() <
-          tp.x() - 0.1 * point_right.y()
-        ) {
+        if (point_right.x() - 0.15 * point_right.y() < tp.x() - 0.15 * tp.y()) {
           point_right = tp;
         }
-        if (point_left.x() + 0.1 * point_left.y() > tp.x() + 0.1 * tp.y()) {
+        if (
+          point_right2.x() + 0.15 * point_right2.y() <
+          tp.x() + 0.15 * tp.y()
+        ) {
+          point_right2 = tp;
+        }
+        if (point_left.x() + 0.15 * point_left.y() > tp.x() + 0.15 * tp.y()) {
           point_left = tp;
+        }
+        if (point_left2.x() - 0.15 * point_left2.y() > tp.x() - 0.15 * tp.y()) {
+          point_left2 = tp;
         }
       }
       point_top.screen();
       point_left.screen();
+      point_left2.screen();
       point_right.screen();
+      point_right2.screen();
       point_bottom.screen();
       R = exactR;
-      const boxPoints = [point_top, point_left, point_right, point_bottom];
+      theta = exactT;
+      const boxPoints = [
+        point_top,
+        point_left,
+        point_right,
+        point_left2,
+        point_right2,
+        point_bottom,
+      ];
       let volume = sixPoints(boxPoints);
       if (
         volume &&
-        volume.score > 0.3 &&
         volume.width < 1000 &&
         volume.height < 1000 &&
         volume.depth < 1000
@@ -390,7 +412,6 @@ log:
 
     if (
       apVolume &&
-      apVolume.score > 0.7 &&
       apVolume.width < 1000 &&
       apVolume.height < 1000 &&
       apVolume.depth < 1000

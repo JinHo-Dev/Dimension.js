@@ -524,12 +524,10 @@ const getPoints = () => {
     ];
     let volume = sixPoints(boxPoints);
     if (
-      // volume &&
-      // volume.score > 0.3 &&
-      // volume.width < 1000 &&
-      // volume.height < 1000 &&
-      // volume.depth < 1000
-      true
+      volume &&
+      volume.width < 1000 &&
+      volume.height < 1000 &&
+      volume.depth < 1000
     ) {
       ctx.fillStyle = "#000";
       ctx.font = "bold 50px monospace";
@@ -561,7 +559,6 @@ const getPoints = () => {
   }
   if (
     apVolume &&
-    apVolume.score > 0.3 &&
     apVolume.width < 1000 &&
     apVolume.height < 1000 &&
     apVolume.depth < 1000
@@ -890,9 +887,9 @@ const sixPoints = (points) => {
       distance(points[3], points[5])) /
     2;
   let score =
-    -Math.pow(pillar(points[1], points[3]) - height) -
-    Math.pow(distance(points[4], points[5]) - width) -
-    Math.pow(distance(points[3], points[5]) - depth);
+    -Math.pow(pillar(points[1], points[3]) / height - 1, 2) -
+    Math.pow(distance(points[4], points[5]) / width - 1, 2) -
+    Math.pow(distance(points[3], points[5]) / depth - 1, 2);
   if (width > depth) {
     return {
       height: height,
