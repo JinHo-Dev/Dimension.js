@@ -472,7 +472,7 @@ const getPoints = () => {
     const exactR = R;
     const thisR = Math.PI / 2 - R;
     const exactT = theta;
-    const thisT = Math.PI + theta;
+    const thisT = (Math.PI + theta) % Math.PI;
     R = thisR;
     theta = thisT;
     point_top.plane();
@@ -487,22 +487,22 @@ const getPoints = () => {
     for (let j = 2; j < z; j += 2) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
       tp.plane();
-      if (point_top.y() > tp.y()) {
+      if (point_top.y() < tp.y()) {
         point_top = tp;
       }
-      if (point_bottom.y() < tp.y()) {
+      if (point_bottom.y() > tp.y()) {
         point_bottom = tp;
       }
-      if (point_right.x() - 0.15 * point_right.y() < tp.x() - 0.15 * tp.y()) {
+      if (point_right.x() + 0.15 * point_right.y() < tp.x() + 0.15 * tp.y()) {
         point_right = tp;
       }
-      if (point_right2.x() + 0.15 * point_right2.y() < tp.x() + 0.15 * tp.y()) {
+      if (point_right2.x() - 0.15 * point_right2.y() < tp.x() - 0.15 * tp.y()) {
         point_right2 = tp;
       }
-      if (point_left.x() + 0.15 * point_left.y() > tp.x() + 0.15 * tp.y()) {
+      if (point_left.x() - 0.15 * point_left.y() > tp.x() - 0.15 * tp.y()) {
         point_left = tp;
       }
-      if (point_left2.x() - 0.15 * point_left2.y() > tp.x() - 0.15 * tp.y()) {
+      if (point_left2.x() + 0.15 * point_left2.y() > tp.x() + 0.15 * tp.y()) {
         point_left2 = tp;
       }
     }
