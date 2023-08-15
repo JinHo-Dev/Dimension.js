@@ -944,7 +944,7 @@ const sixPoints = (points) => {
     (pillar(points[1], points[3]) + pillar(points[2], points[4])) / 2;
   width = distance(points[4], points[5]);
   depth = distance(points[3], points[5]);
-  let score = -Math.pow(pillar(points[1], points[3]) / height - 1, 2);
+  let score = -pillar(points[1], points[3]) / height;
   if (width > depth) {
     return {
       height: height,
