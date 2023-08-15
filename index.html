@@ -5,7 +5,9 @@
 />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>Project021</title>
 <video playsinline></video>
+<canvas></canvas>
 <canvas></canvas>
 <canvas></canvas>
 <canvas></canvas>
@@ -16,6 +18,9 @@
 <input value="125" />
 <button>SET F</button>
 <button>AUTO F</button>
+
+<button>1</button>
+<button>2</button>
 
 <textarea readonly noresize="false"></textarea>
 <textarea readonly noresize="false"></textarea>
@@ -59,6 +64,9 @@ log:
   canvas:nth-of-type(3) {
     opacity: 0.5;
   }
+  canvas:nth-of-type(4) {
+    display: none;
+  }
   button {
     background-color: rgba(255, 255, 255, 0.8);
     position: absolute;
@@ -100,6 +108,22 @@ log:
     /* AUTO F */
     top: 10px;
     left: 180px;
+  }
+  button:nth-of-type(6) {
+    /* 1 */
+    height: 75px;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    border-radius: 100%;
+  }
+  button:nth-of-type(7) {
+    /* 2 */
+    height: 75px;
+    top: 110px;
+    right: 10px;
+    font-size: 20px;
+    border-radius: 100%;
   }
   input {
     font-family: monospace;
@@ -151,6 +175,238 @@ log:
     font-size: 13px;
   }
 </style>
+<script>
+  document.querySelectorAll("button")[5].onclick = () => {
+    BOX_measure = 0;
+    sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+    captureAsImg(1);
+  };
+
+  document.querySelectorAll("button")[6].onclick = () => {
+    BOX_measure = 0;
+    sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+    captureAsImg(6);
+  };
+
+  let sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+  const cvs_ = document.querySelectorAll("canvas")[3];
+  const ctx_ = cvs_.getContext("2d");
+  const captureAsImg = (num) => {
+    cvs_.width = 320 * num;
+    cvs_.height = 320;
+    ctx_.clearRect(0, 0, 320 * num, 320);
+    ctx_.drawImage(vid, 0, 0, 320, 320);
+    const captureExact = (cnt, total) => {
+      if (cnt == total) {
+        u2net_(num);
+        return;
+      }
+      document.querySelectorAll("textarea")[2].value += `${
+        cnt + 1
+      }/${total}\n\n`;
+      ctx_.drawImage(vid, 320 * cnt, 0, 320, 320);
+      setTimeout(() => {
+        captureExact(cnt + 1, total);
+      }, 500);
+    };
+    captureExact(0, num);
+  };
+
+  const u2net_ = (num) => {
+    if (typeof session === "undefined") {
+      setTimeout(() => {
+        u2net_(num);
+      }, 100);
+      return;
+    }
+    detect_container_(num);
+  };
+
+  const detect_container_ = (num) => {
+    const detect_ = async (cnt, total) => {
+      if (cnt == total) {
+        if (sumVolume.cnt > 0) {
+          document.querySelectorAll("textarea")[1].value = `
+    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+            sumVolume.depth / sumVolume.cnt
+          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
+          document.querySelectorAll("textarea")[2].value += `
+    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+            sumVolume.depth / sumVolume.cnt
+          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
+          alert(
+            `가로: ${Math.round(
+              sumVolume.width / sumVolume.cnt
+            )} \n세로: ${Math.round(
+              sumVolume.depth / sumVolume.cnt
+            )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`
+          );
+        } else {
+          document.querySelectorAll("textarea")[2].value += `failed\n\n`;
+        }
+        return;
+      }
+      ctx_off.drawImage(cvs_, 320 * cnt, 0, 320, 320, 0, 0, 320, 320);
+
+      let input_imageData = ctx_off.getImageData(0, 0, TW, TH); // change this for input
+      let floatArr = new Float32Array(TW * TH * 3);
+      let floatArr2 = new Float32Array(TW * TH * 3);
+
+      let j = 0;
+      for (let i = 1; i < input_imageData.data.length + 1; i++) {
+        if (i % 4 != 0) {
+          floatArr[j] = input_imageData.data[i - 1].toFixed(2) / 255;
+          j = j + 1;
+        }
+      }
+      let k = 0;
+      for (let i = 0; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      for (let i = 1; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      for (let i = 2; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      const input = new ort.Tensor("float32", floatArr2, [1, 3, TW, TH]);
+      const feeds = { "input.1": input };
+      const results = await session.run(feeds).then((result) => {
+        const pred = Object.values(result)[0];
+        let myImageData = ctx_off.createImageData(TW, TH);
+        for (let i = 0; i < pred.data.length * 4; i += 4) {
+          let pixelIndex = i;
+          if (i != 0) {
+            t = i / 4;
+          } else {
+            t = 0;
+          }
+          const t1 = Math.round(pred.data[t] * 255);
+          myImageData.data[pixelIndex] = t1; // red color
+          myImageData.data[pixelIndex + 1] = t1; // green color
+          myImageData.data[pixelIndex + 2] = t1; // blue color
+          myImageData.data[pixelIndex + 3] = 255;
+        }
+        // Apply image mask
+        cvs_off.width = TW;
+        cvs_off.height = TH;
+        ctx_.putImageData(myImageData, cnt * 320, 0);
+        getPoints_(cnt);
+        detect_(cnt + 1, total);
+      });
+    };
+    detect_(0, num);
+  };
+
+  const getPoints_ = (cnt) => {
+    let img_ = cv.matFromImageData(ctx_.getImageData(cnt * 320, 0, 320, 320));
+    let thr_ = new cv.Mat();
+    cv.cvtColor(img_, thr_, cv.COLOR_BGR2GRAY);
+    cv.threshold(thr_, thr_, 0, 255, cv.THRESH_OTSU);
+    let hierarchy = new cv.Mat();
+    let contours = new cv.MatVector();
+
+    cv.findContours(
+      thr_,
+      contours,
+      hierarchy,
+      cv.RETR_EXTERNAL,
+      cv.CHAIN_APPROX_NONE
+    );
+
+    let apVolume;
+    for (let i = 0; i < contours.size(); i++) {
+      let cont = contours.get(i);
+      let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
+      const exactR = R;
+      const thisR = Math.PI / 2 - R;
+      R = thisR;
+      point_top.plane();
+      let point_bottom = point_top.copy();
+      let point_left = point_top.copy();
+      let point_right = point_top.copy();
+      let z = cont.size().height;
+      z += z;
+      if (z < 4) continue;
+      for (let j = 2; j < z; j += 2) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        tp.plane();
+        if (point_top.y() > tp.y()) {
+          point_top = tp;
+        }
+        if (point_bottom.y() < tp.y()) {
+          point_bottom = tp;
+        }
+        if (
+          point_right.x() - 0.1 * point_right.y() <
+          tp.x() - 0.1 * point_right.y()
+        ) {
+          point_right = tp;
+        }
+        if (point_left.x() + 0.1 * point_left.y() > tp.x() + 0.1 * tp.y()) {
+          point_left = tp;
+        }
+      }
+      point_top.screen();
+      point_left.screen();
+      point_right.screen();
+      point_bottom.screen();
+      R = exactR;
+      const boxPoints = [point_top, point_left, point_right, point_bottom];
+      let volume = sixPoints(boxPoints);
+      if (
+        volume &&
+        volume.score > 0.7 &&
+        volume.width < 1000 &&
+        volume.height < 1000 &&
+        volume.depth < 1000
+      ) {
+        ctx_.fillStyle = "#000";
+        ctx_.font = "bold 50px monospace";
+        ctx_.fillText(
+          `가로: ${Math.round(volume.width)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 60
+        );
+        ctx_.fillText(
+          `세로: ${Math.round(volume.depth)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 110
+        );
+        ctx_.fillText(
+          `높이: ${Math.round(volume.height)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 160
+        );
+      }
+      if (!apVolume || volume.score > apVolume.score) {
+        apVolume = volume;
+      }
+      cont.delete();
+    }
+
+    if (
+      apVolume &&
+      apVolume.score > 0.7 &&
+      apVolume.width < 1000 &&
+      apVolume.height < 1000 &&
+      apVolume.depth < 1000
+    ) {
+      sumVolume.width += apVolume.width;
+      sumVolume.height += apVolume.height;
+      sumVolume.depth += apVolume.depth;
+      sumVolume.cnt++;
+    }
+    contours.delete();
+    hierarchy.delete();
+    img_.delete();
+    thr_.delete();
+  };
+</script>
+
 <script src="main.js"></script>
 <script src="u2netponnx.js"></script>
 

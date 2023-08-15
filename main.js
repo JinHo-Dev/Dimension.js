@@ -46,7 +46,11 @@ const DRF = () => {
 DRF();
 
 let itv = setInterval(function () {
-  if (typeof cv != "undefined" && typeof start != "undefined") {
+  if (
+    typeof ctx != "undefined" &&
+    typeof cv != "undefined" &&
+    typeof start != "undefined"
+  ) {
     clearInterval(itv);
     start();
   }
@@ -90,6 +94,7 @@ document.querySelector("button").onclick = () => {
 
 document.querySelectorAll("button")[1].onclick = () => {
   BOX_measure = 1;
+  sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
   document.querySelectorAll("textarea")[2].value += `detection ON\n\n`;
 };
 document.querySelectorAll("button")[2].onclick = () => {
@@ -414,32 +419,34 @@ const detect = async () => {
   }
   const input = new ort.Tensor("float32", floatArr2, [1, 3, TW, TH]);
   const feeds = { "input.1": input };
-  const results = await session.run(feeds).then();
-  const pred = Object.values(results)[0];
-  let myImageData = ctx_off.createImageData(TW, TH);
-  for (let i = 0; i < pred.data.length * 4; i += 4) {
-    let pixelIndex = i;
-    if (i != 0) {
-      t = i / 4;
-    } else {
-      t = 0;
+  const results = await session.run(feeds).then((result) => {
+    //const pred = Object.values(results)[0];
+    const pred = Object.values(result)[0];
+    let myImageData = ctx_off.createImageData(TW, TH);
+    for (let i = 0; i < pred.data.length * 4; i += 4) {
+      let pixelIndex = i;
+      if (i != 0) {
+        t = i / 4;
+      } else {
+        t = 0;
+      }
+      const t1 = Math.round(pred.data[t] * 255);
+      myImageData.data[pixelIndex] = t1; // red color
+      myImageData.data[pixelIndex + 1] = t1; // green color
+      myImageData.data[pixelIndex + 2] = t1; // blue color
+      myImageData.data[pixelIndex + 3] = 255;
     }
-    const t1 = Math.round(pred.data[t] * 255);
-    myImageData.data[pixelIndex] = t1; // red color
-    myImageData.data[pixelIndex + 1] = t1; // green color
-    myImageData.data[pixelIndex + 2] = t1; // blue color
-    myImageData.data[pixelIndex + 3] = 255;
-  }
-  // Apply image mask
-  cvs_off.width = TW;
-  cvs_off.height = TH;
-  cvs_result.width = TW;
-  cvs_result.height = TH;
-  ctx_result.putImageData(myImageData, 0, 0);
-  cvs_result.style.width = document.querySelector("video").clientWidth;
-  cvs_result.style.height = document.querySelector("video").clientHeight;
-  getPoints();
-  setTimeout(detect, interval_time);
+    // Apply image mask
+    cvs_off.width = TW;
+    cvs_off.height = TH;
+    cvs_result.width = TW;
+    cvs_result.height = TH;
+    ctx_result.putImageData(myImageData, 0, 0);
+    cvs_result.style.width = document.querySelector("video").clientWidth;
+    cvs_result.style.height = document.querySelector("video").clientHeight;
+    getPoints();
+    setTimeout(detect, interval_time);
+  });
 };
 
 const getPoints = () => {
@@ -498,18 +505,53 @@ const getPoints = () => {
     R = exactR;
     const boxPoints = [point_top, point_left, point_right, point_bottom];
     let volume = sixPoints(boxPoints);
+    if (
+      volume &&
+      volume.score > 0.7 &&
+      volume.width < 1000 &&
+      volume.height < 1000 &&
+      volume.depth < 1000
+    ) {
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 50px monospace";
+      ctx.fillText(
+        `가로: ${Math.round(volume.width)}`,
+        point_left.x() + 20,
+        point_top.y() + 60
+      );
+      ctx.fillText(
+        `세로: ${Math.round(volume.depth)}`,
+        point_left.x() + 20,
+        point_top.y() + 110
+      );
+      ctx.fillText(
+        `높이: ${Math.round(volume.height)}`,
+        point_left.x() + 20,
+        point_top.y() + 160
+      );
+    }
     if (!apVolume || volume.score > apVolume.score) {
       apVolume = volume;
     }
     cont.delete();
   }
-  if (apVolume) {
-    document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
-      apVolume.width
-    )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
-      apVolume.height
-    )}`;
-
+  if (
+    apVolume &&
+    apVolume.score > 0.7 &&
+    apVolume.width < 1000 &&
+    apVolume.height < 1000 &&
+    apVolume.depth < 1000
+  ) {
+    sumVolume.width += apVolume.width;
+    sumVolume.height += apVolume.height;
+    sumVolume.depth += apVolume.depth;
+    sumVolume.cnt++;
+    if (sumVolume.cnt > 0) {
+      document.querySelectorAll("textarea")[1].value = `
+    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+        sumVolume.depth / sumVolume.cnt
+      )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
+    }
     document.querySelectorAll("textarea")[2].value += `가로: ${Math.round(
       apVolume.width
     )} \n세로: ${Math.round(apVolume.depth)}\n높이: ${Math.round(
