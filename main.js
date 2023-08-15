@@ -506,11 +506,12 @@ const getPoints = () => {
     const boxPoints = [point_top, point_left, point_right, point_bottom];
     let volume = sixPoints(boxPoints);
     if (
-      volume &&
-      volume.score > 0.3 &&
-      volume.width < 1000 &&
-      volume.height < 1000 &&
-      volume.depth < 1000
+      // volume &&
+      // volume.score > 0.3 &&
+      // volume.width < 1000 &&
+      // volume.height < 1000 &&
+      // volume.depth < 1000
+      true
     ) {
       ctx.fillStyle = "#000";
       ctx.font = "bold 50px monospace";
@@ -529,6 +530,11 @@ const getPoints = () => {
         point_left.x() + 20,
         point_top.y() + 160
       );
+      ctx.fillText(
+        `점수: ${Math.round(volume.score)}`,
+        point_left.x() + 20,
+        point_top.y() + 210
+      );
     }
     if (!apVolume || volume.score > apVolume.score) {
       apVolume = volume;
@@ -537,7 +543,7 @@ const getPoints = () => {
   }
   if (
     apVolume &&
-    apVolume.score > 0.7 &&
+    apVolume.score > 0.3 &&
     apVolume.width < 1000 &&
     apVolume.height < 1000 &&
     apVolume.depth < 1000
