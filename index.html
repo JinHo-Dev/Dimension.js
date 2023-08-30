@@ -11,7 +11,27 @@
 <canvas></canvas>
 <canvas></canvas>
 <canvas></canvas>
-<button>SET D&R</button>
+<div
+  style="
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 160px;
+  "
+></div>
+<div
+  style="
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 160px;
+  "
+></div>
+<button>SET REF</button>
 <button>BOX ON</button>
 <button>BOX OFF</button>
 <input value="1600" />
@@ -19,7 +39,7 @@
 <button>SET F</button>
 <button>AUTO F</button>
 
-<button>1</button>
+<button></button>
 <button>2</button>
 
 <textarea readonly noresize="false"></textarea>
@@ -28,11 +48,16 @@
 log: 
   
 </textarea>
+<div
+  class="Alert"
+  onclick="document.querySelector('.Alert').style.display='none';"
+></div>
 <style>
   body {
     margin: 0;
     overflow: hidden;
     -webkit-text-size-adjust: none;
+    background-color: #000;
   }
   * {
     -webkit-user-select: none;
@@ -80,24 +105,32 @@ log:
   }
   button:nth-of-type(1) {
     /* SET D&R */
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    top: 50px;
-    left: 95px;
-    width: 90px;
+    background: #09f;
+    color: #fff;
+    width: 100px;
+    top: 100px;
+    height: 46px;
+    left: 50%;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: -50px;
   }
   button:nth-of-type(2) {
     /* BOX ON */
+    display: none;
     top: 90px;
     left: 10px;
   }
   button:nth-of-type(3) {
     /* BOX OFF */
+    display: none;
     top: 90px;
     left: 100px;
   }
   button:nth-of-type(4) {
     /* SET F */
+    display: none;
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
     top: 10px;
@@ -106,19 +139,28 @@ log:
   }
   button:nth-of-type(5) {
     /* AUTO F */
+    display: none;
     top: 10px;
     left: 180px;
   }
   button:nth-of-type(6) {
     /* 1 */
-    height: 75px;
-    top: 10px;
-    right: 10px;
+    background-color: #fff;
+    position: absolute;
+    height: 70px;
+    width: 70px;
+    top: 100%;
+    left: 50%;
+    margin-top: -130px;
+    margin-left: -35px;
     font-size: 20px;
     border-radius: 100%;
+    border: solid 4px #000;
+    box-shadow: 0px 0px 0px 4px #fff;
   }
   button:nth-of-type(7) {
     /* 2 */
+    display: none;
     height: 75px;
     top: 110px;
     right: 10px;
@@ -142,8 +184,18 @@ log:
     font-weight: bold;
     z-index: 2;
   }
+  input:nth-of-type(1) {
+    display: none;
+  }
   input:nth-of-type(2) {
-    top: 50px;
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 120px;
+    height: 38px;
+    top: 46px;
+    left: 50%;
+    margin-left: -60px;
   }
   textarea {
     resize: none;
@@ -167,12 +219,38 @@ log:
     font-family: monospace;
     z-index: 2;
   }
+  textarea:nth-of-type(1) {
+    display: none;
+  }
   textarea:nth-of-type(2) {
+    display: none;
     top: 240px;
   }
   textarea:nth-of-type(3) {
+    display: none;
     top: 340px;
     font-size: 13px;
+  }
+  .Alert {
+    display: none;
+    border: solid 1px rgba(200, 200, 200);
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    box-sizing: border-box;
+    padding: 10px;
+    height: 140px;
+    margin-top: -75px;
+    border-radius: 20px;
+    background: #fff;
+    color: #000;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 40px;
+    z-index: 99;
   }
 </style>
 <script>
@@ -235,8 +313,8 @@ log:
             sumVolume.width / sumVolume.cnt
           )} \n세로: ${Math.round(
             sumVolume.depth / sumVolume.cnt
-          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
-          alert(
+          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}\n\n`;
+          Alert(
             `가로: ${Math.round(
               sumVolume.width / sumVolume.cnt
             )} \n세로: ${Math.round(
@@ -493,4 +571,7 @@ log:
 <script src="main.js"></script>
 <script src="u2netponnx.js"></script>
 
+<script async src="wasm64.js"></script>
 <script async src="opencv.js"></script>
+<script async src="ort.js"></script>
+<!-- <script async src="ort.min.js.map"></script> -->

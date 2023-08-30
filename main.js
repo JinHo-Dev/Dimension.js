@@ -341,6 +341,10 @@ const start = () => {
         H = vid.videoHeight;
         vid.width = W;
         vid.height = H;
+        vid.style.top = (window.innerHeight - (window.innerWidth * H) / W) / 2;
+        cvs.style.top = (window.innerHeight - (window.innerWidth * H) / W) / 2;
+        cvs_result.style.top =
+          (window.innerHeight - (window.innerWidth * H) / W) / 2;
         vid.style.height = (window.innerWidth / W) * H;
         cvs.width = W;
         cvs.height = H;
@@ -420,7 +424,6 @@ const detect = async () => {
   const input = new ort.Tensor("float32", floatArr2, [1, 3, TW, TH]);
   const feeds = { "input.1": input };
   const results = await session.run(feeds).then((result) => {
-    //const pred = Object.values(results)[0];
     const pred = Object.values(result)[0];
     let myImageData = ctx_off.createImageData(TW, TH);
     for (let i = 0; i < pred.data.length * 4; i += 4) {
@@ -632,8 +635,9 @@ const getPoints = () => {
     sumVolume.depth += apVolume.depth;
     sumVolume.cnt++;
     if (sumVolume.cnt > 0) {
-      document.querySelectorAll("textarea")[1].value = `
-    가로: ${Math.round(sumVolume.width / sumVolume.cnt)} \n세로: ${Math.round(
+      document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+        sumVolume.width / sumVolume.cnt
+      )} \n세로: ${Math.round(
         sumVolume.depth / sumVolume.cnt
       )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
     }
@@ -962,6 +966,11 @@ const sixPoints = (points) => {
   }
 };
 
+const Alert = (xx) => {
+  document.querySelector(".Alert").style.display = "block";
+  document.querySelector(".Alert").innerText = xx;
+};
+
 const getScript = (online) => {
   let scriptEle = document.createElement("script");
   scriptEle.setAttribute("src", online);
@@ -969,4 +978,4 @@ const getScript = (online) => {
   document.body.appendChild(scriptEle);
 };
 
-getScript("https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js");
+// getScript("https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js");
