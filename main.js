@@ -476,8 +476,10 @@ const getPoints = () => {
     let point_bottom = point_top.copy();
     let point_left = point_top.copy();
     let point_left2 = point_top.copy();
+    let point_left1 = point_top.copy();
     let point_right = point_top.copy();
     let point_right2 = point_top.copy();
+    let point_right1 = point_top.copy();
     let index_top = 0,
       index_left = 0,
       index_right = 0,
@@ -509,6 +511,7 @@ const getPoints = () => {
     point_left.screen();
     point_right.screen();
     point_bottom.screen();
+
     let a = point_left.y() - point_top.y();
     let b = point_top.x() - point_left.x();
     let c = point_left.x() * point_top.y() - point_top.x() * point_left.y();
@@ -520,9 +523,11 @@ const getPoints = () => {
       if (dist_left2 < dist) {
         dist_left2 = dist;
         point_left2 = tp;
+        index_left2 = j;
       }
       j = (j + 2) % z;
     }
+
     a = point_left.y() - point_bottom.y();
     b = point_bottom.x() - point_left.x();
     c = point_left.x() * point_bottom.y() - point_bottom.x() * point_left.y();
@@ -533,29 +538,62 @@ const getPoints = () => {
       if (dist_left2 < dist) {
         dist_left2 = dist;
         point_left2 = tp;
+        index_left2 = j;
       }
       j = (j + 2) % z;
     }
-    point_left.plane();
+
+    a = point_left2.y() - point_top.y();
+    b = point_bottom.x() - point_left2.x();
+    c = point_left2.x() * point_top.y() - point_top.x() * point_left2.y();
+    d = Math.sqrt(a * a + b * b);
+    let dist_left1 = 0;
+    for (let j = index_left2; j != index_bottom; ) {
+      let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_left1 < dist) {
+        dist_left1 = dist;
+        point_left1 = tp;
+      }
+      j = (j + 2) % z;
+    }
+
+    a = point_left2.y() - point_bottom.y();
+    b = point_bottom.x() - point_left2.x();
+    c = point_left2.x() * point_bottom.y() - point_bottom.x() * point_left2.y();
+    d = Math.sqrt(a * a + b * b);
+    for (let j = index_left2; j != index_bottom; ) {
+      let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_left1 < dist) {
+        dist_left1 = dist;
+        point_left1 = tp;
+      }
+      j = (j + 2) % z;
+    }
+
+    point_left1.plane();
     point_left2.plane();
-    if (point_left2.y() < point_left.y()) {
-      [point_left, point_left2] = [point_left2, point_left];
+    if (point_left2.y() < point_left1.y()) {
+      [point_left1, point_left2] = [point_left2, point_left1];
     }
 
     a = point_right.y() - point_top.y();
     b = point_top.x() - point_right.x();
     c = point_right.x() * point_top.y() - point_top.x() * point_right.y();
     d = Math.sqrt(a * a + b * b);
-    dist_right2 = 0;
+    let dist_right2 = 0;
     for (let j = index_right; j != index_top; ) {
       let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
       let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
       if (dist_right2 < dist) {
         dist_right2 = dist;
         point_right2 = tp;
+        index_right2 = j;
       }
       j = (j + 2) % z;
     }
+
     a = point_right.y() - point_bottom.y();
     b = point_bottom.x() - point_right.x();
     c = point_right.x() * point_bottom.y() - point_bottom.x() * point_right.y();
@@ -566,25 +604,59 @@ const getPoints = () => {
       if (dist_right2 < dist) {
         dist_right2 = dist;
         point_right2 = tp;
+        index_right2 = j;
       }
       j = (j + 2) % z;
     }
-    point_right.plane();
+
+    a = point_right2.y() - point_top.y();
+    b = point_top.x() - point_right2.x();
+    c = point_right2.x() * point_top.y() - point_top.x() * point_right2.y();
+    d = Math.sqrt(a * a + b * b);
+    let dist_right1 = 0;
+    for (let j = index_right2; j != index_top; ) {
+      let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_right1 < dist) {
+        dist_right1 = dist;
+        point_right1 = tp;
+        index_right1 = j;
+      }
+      j = (j + 2) % z;
+    }
+
+    a = point_right2.y() - point_bottom.y();
+    b = point_bottom.x() - point_right2.x();
+    c =
+      point_right2.x() * point_bottom.y() - point_bottom.x() * point_right2.y();
+    d = Math.sqrt(a * a + b * b);
+    for (let j = index_bottom; j != index_right2; ) {
+      let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+      let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+      if (dist_right1 < dist) {
+        dist_right1 = dist;
+        point_right1 = tp;
+        index_right1 = j;
+      }
+      j = (j + 2) % z;
+    }
+
+    point_right1.plane();
     point_right2.plane();
-    if (point_right2.y() < point_right.y()) {
-      [point_right, point_right2] = [point_right2, point_right];
+    if (point_right2.y() < point_right1.y()) {
+      [point_right1, point_right2] = [point_right2, point_right1];
     }
 
     point_top.screen();
-    point_left.screen();
+    point_left1.screen();
     point_left2.screen();
-    point_right.screen();
+    point_right1.screen();
     point_right2.screen();
     point_bottom.screen();
     const boxPoints = [
       point_top,
-      point_left,
-      point_right,
+      point_left1,
+      point_right1,
       point_left2,
       point_right2,
       point_bottom,
@@ -653,6 +725,13 @@ const getPoints = () => {
   thr_.delete();
 };
 
+let a4_flag = false;
+let a4_point = [
+  new Point(0, 0),
+  new Point(0, 0),
+  new Point(0, 0),
+  new Point(0, 0),
+];
 const refCV = (img, thr) => {
   let hierarchy = new cv.Mat();
   let contours = new cv.MatVector();
@@ -711,6 +790,35 @@ const refCV = (img, thr) => {
       (rect_length * rect_length) / Math.PI / circle_radius / circle_radius;
 
     if (Math.abs(area_parent / area_self - ans) > max_error_rate) continue;
+
+    a4_flag = true;
+    let a4_node_child = hierarchy.data32S[4 * grand_node + 3];
+    if (a4_node_child == -1) a4_flag = false;
+    let a4_node = hierarchy.data32S[4 * a4_node_child + 3];
+    if (a4_flag && a4_node == -1) a4_flag = false;
+    let cont_a4;
+    let approx_a4 = new cv.Mat();
+    if (a4_flag) {
+      cont_a4 = contours.get(a4_node);
+      cv.approxPolyDP(
+        cont_a4,
+        approx_a4,
+        cv.arcLength(cont, true) * 0.02,
+        true
+      );
+      if (approx_grand.size().height != 4) {
+        approx_a4.delete();
+        a4_flag = false;
+      } else {
+        a4_point = [
+          new Point(approx_a4.data32S[0], approx_a4.data32S[1]),
+          new Point(approx_a4.data32S[2], approx_a4.data32S[3]),
+          new Point(approx_a4.data32S[4], approx_a4.data32S[5]),
+          new Point(approx_a4.data32S[6], approx_a4.data32S[7]),
+        ];
+      }
+    }
+    approx_a4.delete();
 
     refCandidate(cont_parent, approx_parent, approx_grand, cont);
 
@@ -917,7 +1025,42 @@ const refCheck = (ref, d, ref_LR) => {
     F = avgF;
     DRF();
   }
-  D *= (d + d) / distance(ref[0], ref[2]);
+  if (a4_flag) {
+    const v =
+      distance(a4_point[0], a4_point[1]) / distance(a4_point[2], a4_point[3]);
+    const w =
+      distance(a4_point[1], a4_point[2]) / distance(a4_point[3], a4_point[0]);
+    if (v <= 1.1 && v >= 0.9 && w <= 1.1 && w >= 0.9) {
+      console.log(v, w);
+      let zz = Math.sqrt(
+        (distance(a4_point[0], a4_point[1]) *
+          distance(a4_point[2], a4_point[3])) /
+          distance(a4_point[1], a4_point[2]) /
+          distance(a4_point[3], a4_point[0])
+      );
+      if (zz < 1) zz = 1 / zz;
+      if (Math.abs(zz - 1.41429) < 0.2) {
+        console.log(Math.abs(zz - 1.41429));
+        let d1 = Math.sqrt(
+          distance(a4_point[0], a4_point[1]) *
+            distance(a4_point[2], a4_point[3])
+        );
+        let d2 = Math.sqrt(
+          distance(a4_point[1], a4_point[2]) *
+            distance(a4_point[3], a4_point[0])
+        );
+        D *= Math.sqrt((210 * 297) / d1 / d2);
+      } else {
+        a4_flag = false;
+      }
+    } else {
+      a4_flag = false;
+    }
+  }
+  if (!a4_flag) {
+    D *= (d + d) / distance(ref[0], ref[2]);
+  }
+
   DRF();
   currentD = D;
   currentR = R;
