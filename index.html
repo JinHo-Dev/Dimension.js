@@ -1,122 +1,577 @@
+<meta charset="utf-8" />
 <meta
   name="viewport"
   content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
 />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<img id="imageSrc" />
+<title>Project021</title>
 <video playsinline></video>
 <canvas></canvas>
-
-<button onclick="DRF_capture();">DRF setting</button>
-<textarea></textarea>
-
-<style>
-  textarea {
-    background-color: rgba(255, 255, 255, 0.5);
-    font-size: 18px;
+<canvas></canvas>
+<canvas></canvas>
+<canvas></canvas>
+<div
+  style="
     position: absolute;
-    top: calc(20% + 50px);
-    left: 10%;
-    width: 35%;
-    line-height: 24px;
-    height: 100px;
-    border: solid 1px black;
-    margin: 0;
-    padding: 0;
-  }
+    background: rgba(0, 0, 0, 0.6);
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 160px;
+  "
+></div>
+<div
+  style="
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 160px;
+  "
+></div>
+<button>SET REF</button>
+<button>BOX ON</button>
+<button>BOX OFF</button>
+<input value="1600" />
+<input value="125" />
+<button>SET F</button>
+<button>AUTO F</button>
+
+<button></button>
+<button>2</button>
+
+<textarea readonly noresize="false"></textarea>
+<textarea readonly noresize="false"></textarea>
+<textarea readonly noresize="false">
+log: 
+  
+</textarea>
+<div
+  class="Alert"
+  onclick="document.querySelector('.Alert').style.display='none';"
+></div>
+<style>
   body {
     margin: 0;
+    overflow: hidden;
+    -webkit-text-size-adjust: none;
+    background-color: #000;
   }
-  image {
-    display: none;
+  * {
+    -webkit-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-appearance: none;
+    outline: none;
+    appearance: none;
   }
   video {
-    display: none;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
   }
   canvas {
+    position: absolute;
     width: 100%;
+  }
+  canvas:nth-of-type(1) {
+    z-index: 1;
+  }
+  canvas:nth-of-type(2) {
+    display: none;
+  }
+  canvas:nth-of-type(3) {
+    opacity: 0.5;
+  }
+  canvas:nth-of-type(4) {
+    display: none;
   }
   button {
     background-color: rgba(255, 255, 255, 0.8);
     position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 40px;
+    top: 10px;
+    width: 75px;
+    height: 30px;
+    font-size: 11px;
+    border: solid 1px rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    z-index: 2;
+  }
+  button:nth-of-type(1) {
+    /* SET D&R */
+    background: #09f;
+    color: #fff;
+    width: 100px;
+    top: 100px;
+    height: 46px;
+    left: 50%;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: -50px;
+  }
+  button:nth-of-type(2) {
+    /* BOX ON */
+    display: none;
+    top: 90px;
+    left: 10px;
+  }
+  button:nth-of-type(3) {
+    /* BOX OFF */
+    display: none;
+    top: 90px;
+    left: 100px;
+  }
+  button:nth-of-type(4) {
+    /* SET F */
+    display: none;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    top: 10px;
+    left: 95px;
+    width: 70px;
+  }
+  button:nth-of-type(5) {
+    /* AUTO F */
+    display: none;
+    top: 10px;
+    left: 180px;
+  }
+  button:nth-of-type(6) {
+    /* 1 */
+    background-color: #fff;
+    position: absolute;
+    height: 70px;
+    width: 70px;
+    top: 100%;
+    left: 50%;
+    margin-top: -130px;
+    margin-left: -35px;
     font-size: 20px;
+    border-radius: 100%;
+    border: solid 4px #000;
+    box-shadow: 0px 0px 0px 4px #fff;
+  }
+  button:nth-of-type(7) {
+    /* 2 */
+    display: none;
+    height: 75px;
+    top: 110px;
+    right: 10px;
+    font-size: 20px;
+    border-radius: 100%;
+  }
+  input {
+    font-family: monospace;
+    background-color: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 80px;
+    height: 30px;
+    font-size: 12px;
+    border: solid 1px rgba(0, 0, 0, 0.7);
+    border-radius: 3px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    text-align: center;
+    font-weight: bold;
+    z-index: 2;
+  }
+  input:nth-of-type(1) {
+    display: none;
+  }
+  input:nth-of-type(2) {
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 120px;
+    height: 38px;
+    top: 46px;
+    left: 50%;
+    margin-left: -60px;
+  }
+  textarea {
+    resize: none;
+    background-color: rgba(255, 255, 255, 0);
+    color: #fff;
+    text-shadow: 0px 2px 0px rgba(0, 0, 0, 0.3), 1px 0px 0px rgba(0, 0, 0, 0.3),
+      -1px 0px 0px rgba(0, 0, 0, 0.3), 0px -2px 0px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    font-size: 18px;
+    position: absolute;
+    top: 140px;
+    left: 10px;
+    width: 120px;
+    line-height: 20px;
+    height: 80px;
+    font-size: 15px;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    font-family: monospace;
+    z-index: 2;
+  }
+  textarea:nth-of-type(1) {
+    display: none;
+  }
+  textarea:nth-of-type(2) {
+    display: none;
+    top: 240px;
+  }
+  textarea:nth-of-type(3) {
+    display: none;
+    top: 340px;
+    font-size: 13px;
+  }
+  .Alert {
+    display: none;
+    border: solid 1px rgba(200, 200, 200);
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    box-sizing: border-box;
+    padding: 10px;
+    height: 140px;
+    margin-top: -75px;
+    border-radius: 20px;
+    background: #fff;
+    color: #000;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 40px;
+    z-index: 99;
   }
 </style>
-
-<script src="script/config.js"></script>
-<script src="script/DRF.js"></script>
-<script src="script/gridGraphic.js"></script>
-<script src="script/sixPoints.js"></script>
-<script src="script/sevenPoints.js"></script>
-<script src="script/ccw.js"></script>
-<script src="script/realTime.js"></script>
-<script src="script/pointClass.js"></script>
-<script src="script/crossPoint.js"></script>
-<script src="script/pillar.js"></script>
-<script src="script/distance.js"></script>
-<script src="script/reversePoint.js"></script>
-<script src="script/refcheck.js"></script>
-
-<!-- <script async src="script/4.8.0.js"></script> -->
-<!-- <script async src="https://docs.opencv.org/4.8.0/opencv.js"></script> -->
-
 <script>
-  if (window.location.host) {
-    let scriptEle = document.createElement("script");
-    scriptEle.setAttribute("src", "https://docs.opencv.org/4.8.0/opencv.js");
-    scriptEle.setAttribute("async", "true");
-    document.body.appendChild(scriptEle);
-  } else {
-    let scriptEle = document.createElement("script");
-    scriptEle.setAttribute("src", "script/4.8.0.js");
-    scriptEle.setAttribute("async", "true");
-    document.body.appendChild(scriptEle);
-  }
+  document.querySelectorAll("button")[5].onclick = () => {
+    BOX_measure = 0;
+    sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+    captureAsImg(1);
+  };
 
-  let itv = setInterval(function () {
-    if (typeof cv != "undefined") {
-      clearInterval(itv);
-      start();
+  document.querySelectorAll("button")[6].onclick = () => {
+    BOX_measure = 0;
+    sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+    captureAsImg(6);
+  };
+
+  let sumVolume = { height: 0, width: 0, depth: 0, cnt: 0 };
+  const cvs_ = document.querySelectorAll("canvas")[3];
+  const ctx_ = cvs_.getContext("2d");
+  const captureAsImg = (num) => {
+    cvs_.width = 320 * num;
+    cvs_.height = 320;
+    ctx_.clearRect(0, 0, 320 * num, 320);
+    ctx_.drawImage(vid, 0, 0, 320, 320);
+    const captureExact = (cnt, total) => {
+      if (cnt == total) {
+        u2net_(num);
+        return;
+      }
+      document.querySelectorAll("textarea")[2].value += `${
+        cnt + 1
+      }/${total}\n\n`;
+      ctx_.drawImage(vid, 320 * cnt, 0, 320, 320);
+      setTimeout(() => {
+        captureExact(cnt + 1, total);
+      }, 500);
+    };
+    captureExact(0, num);
+  };
+
+  const u2net_ = (num) => {
+    if (typeof session === "undefined") {
+      setTimeout(() => {
+        u2net_(num);
+      }, 100);
+      return;
     }
-  }, 33);
+    detect_container_(num);
+  };
 
-  const DRF_capture = () => {
-    DRF_measure = true;
-    let sumR = 0;
-    let sumD = 0;
-    let sumTheta = 0;
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 500);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 700);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-    }, 900);
-    setTimeout(() => {
-      sumR += R;
-      sumD += D;
-      sumTheta += theta;
-      DRF_measure = false;
-      D = sumD / 4;
-      R = sumR / 4;
-      theta = sumTheta / 4;
-      DRF();
-      document.querySelector("textarea").value = `D: ${Math.round(D)} \nR: ${
-        Math.round(R * 100) / 100
-      } \nF: ${Math.round(F)} \ntheta: ${Math.round(theta * 100) / 100}`;
-    }, 1100);
+  const detect_container_ = (num) => {
+    const detect_ = async (cnt, total) => {
+      if (cnt == total) {
+        if (sumVolume.cnt > 0) {
+          document.querySelectorAll("textarea")[1].value = `가로: ${Math.round(
+            sumVolume.width / sumVolume.cnt
+          )} \n세로: ${Math.round(
+            sumVolume.depth / sumVolume.cnt
+          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`;
+          document.querySelectorAll("textarea")[2].value += `가로: ${Math.round(
+            sumVolume.width / sumVolume.cnt
+          )} \n세로: ${Math.round(
+            sumVolume.depth / sumVolume.cnt
+          )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}\n\n`;
+          Alert(
+            `가로: ${Math.round(
+              sumVolume.width / sumVolume.cnt
+            )} \n세로: ${Math.round(
+              sumVolume.depth / sumVolume.cnt
+            )}\n높이: ${Math.round(sumVolume.height / sumVolume.cnt)}`
+          );
+        } else {
+          document.querySelectorAll("textarea")[2].value += `failed\n\n`;
+        }
+        return;
+      }
+      ctx_off.drawImage(cvs_, 320 * cnt, 0, 320, 320, 0, 0, 320, 320);
+
+      let input_imageData = ctx_off.getImageData(0, 0, TW, TH); // change this for input
+      let floatArr = new Float32Array(TW * TH * 3);
+      let floatArr2 = new Float32Array(TW * TH * 3);
+
+      let j = 0;
+      for (let i = 1; i < input_imageData.data.length + 1; i++) {
+        if (i % 4 != 0) {
+          floatArr[j] = input_imageData.data[i - 1].toFixed(2) / 255;
+          j = j + 1;
+        }
+      }
+      let k = 0;
+      for (let i = 0; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      for (let i = 1; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      for (let i = 2; i < floatArr.length; i += 3) {
+        floatArr2[k] = floatArr[i];
+        k = k + 1;
+      }
+      const input = new ort.Tensor("float32", floatArr2, [1, 3, TW, TH]);
+      const feeds = { "input.1": input };
+      const results = await session.run(feeds).then((result) => {
+        const pred = Object.values(result)[0];
+        let myImageData = ctx_off.createImageData(TW, TH);
+        for (let i = 0; i < pred.data.length * 4; i += 4) {
+          let pixelIndex = i;
+          if (i != 0) {
+            t = i / 4;
+          } else {
+            t = 0;
+          }
+          const t1 = Math.round(pred.data[t] * 255);
+          myImageData.data[pixelIndex] = t1; // red color
+          myImageData.data[pixelIndex + 1] = t1; // green color
+          myImageData.data[pixelIndex + 2] = t1; // blue color
+          myImageData.data[pixelIndex + 3] = 255;
+        }
+        // Apply image mask
+        cvs_off.width = TW;
+        cvs_off.height = TH;
+        ctx_.putImageData(myImageData, cnt * 320, 0);
+        getPoints_(cnt);
+        detect_(cnt + 1, total);
+      });
+    };
+    detect_(0, num);
+  };
+
+  const getPoints_ = (cnt) => {
+    let img_ = cv.matFromImageData(ctx_.getImageData(cnt * 320, 0, 320, 320));
+    let thr_ = new cv.Mat();
+    cv.cvtColor(img_, thr_, cv.COLOR_BGR2GRAY);
+    cv.threshold(thr_, thr_, 0, 255, cv.THRESH_OTSU);
+    let hierarchy = new cv.Mat();
+    let contours = new cv.MatVector();
+
+    cv.findContours(
+      thr_,
+      contours,
+      hierarchy,
+      cv.RETR_EXTERNAL,
+      cv.CHAIN_APPROX_NONE
+    );
+
+    let apVolume;
+    for (let i = 0; i < contours.size(); i++) {
+      let cont = contours.get(i);
+      let point_top = new Point(cont.data32S[0], cont.data32S[1], 2);
+      point_top.plane();
+      let point_bottom = point_top.copy();
+      let point_left = point_top.copy();
+      let point_left2 = point_top.copy();
+      let point_right = point_top.copy();
+      let point_right2 = point_top.copy();
+      let index_top = 0,
+        index_left = 0,
+        index_right = 0,
+        index_bottom = 0;
+      let z = cont.size().height;
+      z += z;
+      if (z < 4) continue;
+      for (let j = 2; j < z; j += 2) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        tp.plane();
+        if (point_top.y() > tp.y()) {
+          point_top = tp;
+          index_top = j;
+        }
+        if (point_bottom.y() < tp.y()) {
+          point_bottom = tp;
+          index_bottom = j;
+        }
+        if (point_right.x() < tp.x()) {
+          point_right = tp;
+          index_right = j;
+        }
+        if (point_left.x() > tp.x()) {
+          point_left = tp;
+          index_left = j;
+        }
+      }
+      point_top.screen();
+      point_left.screen();
+      point_right.screen();
+      point_bottom.screen();
+      let a = point_left.y() - point_top.y();
+      let b = point_top.x() - point_left.x();
+      let c = point_left.x() * point_top.y() - point_top.x() * point_left.y();
+      let d = Math.sqrt(a * a + b * b);
+      let dist_left2 = 0;
+      for (let j = index_top; j != index_left; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_left2 < dist) {
+          dist_left2 = dist;
+          point_left2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      a = point_left.y() - point_bottom.y();
+      b = point_bottom.x() - point_left.x();
+      c = point_left.x() * point_bottom.y() - point_bottom.x() * point_left.y();
+      d = Math.sqrt(a * a + b * b);
+      for (let j = index_left; j != index_bottom; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_left2 < dist) {
+          dist_left2 = dist;
+          point_left2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      point_left.plane();
+      point_left2.plane();
+      if (point_left2.y() < point_left.y()) {
+        [point_left, point_left2] = [point_left2, point_left];
+      }
+
+      a = point_right.y() - point_top.y();
+      b = point_top.x() - point_right.x();
+      c = point_right.x() * point_top.y() - point_top.x() * point_right.y();
+      d = Math.sqrt(a * a + b * b);
+      dist_right2 = 0;
+      for (let j = index_right; j != index_top; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_right2 < dist) {
+          dist_right2 = dist;
+          point_right2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      a = point_right.y() - point_bottom.y();
+      b = point_bottom.x() - point_right.x();
+      c =
+        point_right.x() * point_bottom.y() - point_bottom.x() * point_right.y();
+      d = Math.sqrt(a * a + b * b);
+      for (let j = index_bottom; j != index_right; ) {
+        let tp = new Point(cont.data32S[j], cont.data32S[j + 1], 2);
+        let dist = Math.abs(a * tp.x() + b * tp.y() + c) / d;
+        if (dist_right2 < dist) {
+          dist_right2 = dist;
+          point_right2 = tp;
+        }
+        j = (j + 2) % z;
+      }
+      point_right.plane();
+      point_right2.plane();
+      if (point_right2.y() < point_right.y()) {
+        [point_right, point_right2] = [point_right2, point_right];
+      }
+
+      point_top.screen();
+      point_left.screen();
+      point_left2.screen();
+      point_right.screen();
+      point_right2.screen();
+      point_bottom.screen();
+      const boxPoints = [
+        point_top,
+        point_left,
+        point_right,
+        point_left2,
+        point_right2,
+        point_bottom,
+      ];
+      let volume = sixPoints(boxPoints);
+      if (
+        volume &&
+        volume.width < 1000 &&
+        volume.height < 1000 &&
+        volume.depth < 1000
+      ) {
+        ctx_.fillStyle = "#000";
+        ctx_.font = "bold 50px monospace";
+        ctx_.fillText(
+          `가로: ${Math.round(volume.width)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 60
+        );
+        ctx_.fillText(
+          `세로: ${Math.round(volume.depth)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 110
+        );
+        ctx_.fillText(
+          `높이: ${Math.round(volume.height)}`,
+          320 * cnt + point_left.x() + 20,
+          point_top.y() + 160
+        );
+      }
+      if (!apVolume || volume.score > apVolume.score) {
+        apVolume = volume;
+      }
+      cont.delete();
+    }
+
+    if (
+      apVolume &&
+      apVolume.width < 1000 &&
+      apVolume.height < 1000 &&
+      apVolume.depth < 1000
+    ) {
+      sumVolume.width += apVolume.width;
+      sumVolume.height += apVolume.height;
+      sumVolume.depth += apVolume.depth;
+      sumVolume.cnt++;
+    }
+    contours.delete();
+    hierarchy.delete();
+    img_.delete();
+    thr_.delete();
   };
 </script>
+
+<script src="main.js"></script>
+<script src="u2netponnx.js"></script>
+
+<script async src="wasm64.js"></script>
+<script async src="opencv.js"></script>
+<script async src="ort.js"></script>
+<!-- <script async src="ort.min.js.map"></script> -->
