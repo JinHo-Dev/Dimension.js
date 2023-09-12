@@ -328,7 +328,7 @@ const start = () => {
       audio: false,
       video: {
         frameRate: { min: 24, ideal: 60, max: 60 },
-        facingMode: { exact: "environment" },
+        facingMode: { ideal: "environment" },
         width: { ideal: 2496 },
         height: { ideal: 1404 },
       },
